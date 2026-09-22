@@ -43,7 +43,7 @@ export function ZOWScreen({ userName, userIntents = [], onComplete }: ZOWScreenP
     <div
       className="h-screen flex flex-col overflow-hidden"
       style={{
-        background: 'linear-gradient(135deg, #FAF5FF 0%, #EDE9FE 50%, #EBF8FF 100%)'
+        background: 'white'
       }}
     >
       {/* Logo Header - hide on history screen */}

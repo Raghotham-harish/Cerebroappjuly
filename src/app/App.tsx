@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, Component, type ReactNode } from "react";
 import { LoginScreen } from "./components/LoginScreen";
 import { UserInfoCapture } from "./components/UserInfoCapture";
 import { OracleSetup, OracleConfig } from "./components/OracleSetup";
@@ -100,13 +100,43 @@ function AppContent() {
   );
 }
 
+class ErrorBoundary extends Component<{ children: ReactNode }, { error: Error | null }> {
+  state = { error: null };
+  static getDerivedStateFromError(error: Error) { return { error }; }
+  render() {
+    if (this.state.error) {
+      return (
+        <div className="min-h-screen flex flex-col items-center justify-center px-6" style={{ background: "#F5F3FF" }}>
+          <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4" style={{ background: "#EDE9FE" }}>
+            <span className="text-2xl">🔧</span>
+          </div>
+          <h2 className="text-lg mb-2" style={{ fontFamily: "Lora, serif", color: "#15113C" }}>Something went wrong</h2>
+          <p className="text-sm text-center mb-6" style={{ fontFamily: "Inter, sans-serif", color: "#6B7280", maxWidth: 280 }}>
+            {(this.state.error as Error).message || "An unexpected error occurred."}
+          </p>
+          <button
+            onClick={() => { this.setState({ error: null }); window.location.reload(); }}
+            className="px-6 py-3 rounded-full text-sm font-semibold"
+            style={{ background: "#8B5CF6", color: "white", fontFamily: "Inter, sans-serif" }}
+          >
+            Reload app
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 function App() {
   return (
-    <BurnoutProvider>
-      <PointsProvider>
-        <AppContent />
-      </PointsProvider>
-    </BurnoutProvider>
+    <ErrorBoundary>
+      <BurnoutProvider>
+        <PointsProvider>
+          <AppContent />
+        </PointsProvider>
+      </BurnoutProvider>
+    </ErrorBoundary>
   );
 }
 

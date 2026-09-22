@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CereBro — ZER zone into the feelings wheel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F4F5FA;--ink:#20222E;--muted:#6E7186;--line:#E4E6F0;--card:#FFF;--soft:#F7F8FC;--accent:#4B5BD6;
+--hi:#8B4FB0;--hi-b:#F1E7F8;--zn:#1E7A5E;--zn-b:#E3F5EE;--lo:#3E7BC9;--lo-b:#DFEAF8;
+--happy:#E9A81F;--surprised:#8B6FD0;--bad:#22A57F;--fearful:#DB7C2A;--angry:#D64A44;--disgusted:#6F7488;--sad:#3E7BC9}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Plus Jakarta Sans",system-ui,sans-serif;
+ line-height:1.55;-webkit-font-smoothing:antialiased}
+.page{max-width:1120px;margin:0 auto;padding:clamp(1.25rem,4vw,3rem)}
+header h1{font-size:clamp(1.6rem,3.4vw,2.3rem);font-weight:700;letter-spacing:-.025em;margin:0 0 .5rem}
+header p{margin:0;color:var(--muted);max-width:66ch}
+.map{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;margin:1.6rem 0 1.9rem;padding:1rem 1.15rem;
+ background:var(--card);border:1px solid var(--line);border-radius:16px}
+.pip{font-size:.76rem;font-weight:600;padding:.3rem .6rem;border-radius:8px;background:var(--soft);color:var(--muted);
+ white-space:nowrap;border:1px solid transparent;cursor:pointer}
+.pip.here{background:var(--accent);color:#fff}
+.pip.hi{background:var(--hi-b);color:var(--hi)}
+.pip.lo{background:var(--lo-b);color:var(--lo)}
+.map .sep{color:#C8CBDA;font-size:.7rem}
+.stage{display:grid;grid-template-columns:380px minmax(0,1fr);gap:clamp(1.5rem,4vw,3rem);align-items:start}
+@media(max-width:840px){.stage{grid-template-columns:1fr}}
+.phone{width:360px;max-width:100%;height:730px;background:var(--card);border:9px solid #16182A;border-radius:40px;
+ overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 50px rgba(28,30,60,.13);margin-inline:auto}
+.status{display:flex;justify-content:space-between;padding:.6rem 1.15rem .2rem;font-size:.72rem;font-weight:600;
+ color:var(--muted);flex:none}
+.screen{flex:1;overflow-y:auto;padding:.5rem 1.1rem 1.15rem}
+.screen::-webkit-scrollbar{width:0}
+.eyebrow{font-size:.7rem;font-weight:700;letter-spacing:.04em;color:var(--accent);margin:.2rem 0 .1rem}
+h2.q{font-size:1.13rem;font-weight:700;letter-spacing:-.015em;margin:.15rem 0 .25rem;text-wrap:balance}
+.sub{font-size:.83rem;color:var(--muted);margin:0 0 .85rem}
+
+/* ZER band control */
+.zaxis{display:flex;gap:.5rem;margin:.3rem 0 .2rem}
+.zlab{writing-mode:vertical-rl;transform:rotate(180deg);font-size:.68rem;font-weight:700;color:var(--muted);
+ text-align:center;letter-spacing:.03em;padding:.2rem 0}
+.zbands{flex:1;display:flex;flex-direction:column;gap:.35rem}
+.band{border:2px solid transparent;border-radius:13px;padding:.62rem .8rem;cursor:pointer;text-align:left;
+ font:inherit;width:100%;transition:border-color .15s,transform .12s}
+.band:hover{transform:translateX(2px)}
+.band b{display:block;font-size:.92rem;font-weight:700}
+.band span{font-size:.74rem;opacity:.85;display:block}
+.band.hi{background:var(--hi-b);color:var(--hi)}
+.band.zn{background:var(--zn-b);color:var(--zn)}
+.band.lo{background:var(--lo-b);color:var(--lo)}
+.band.on{border-color:currentColor}
+
+.wheelbox{display:flex;justify-content:center;margin:.1rem 0 .25rem}
+svg.big{width:100%;max-width:296px;height:auto;overflow:visible}
+.seg{cursor:pointer;transform-box:view-box;transform-origin:50% 50%;transition:opacity .15s,transform .15s;outline:none}
+.seg .sh{stroke:#fff;stroke-width:1.6}
+.seg:focus-visible .sh{stroke:var(--ink);stroke-width:2.5}
+.big.dim .seg{opacity:.34}
+.big.dim .seg.on,.big.dim .seg.pick{opacity:1}
+.seg.on{transform:scale(1.035)}
+.seg.pick .sh{stroke:#20222E;stroke-width:2.2}
+.wl{font-weight:700;text-anchor:middle;dominant-baseline:middle;pointer-events:none}
+.hubt{font-weight:700;text-anchor:middle;dominant-baseline:middle;font-size:13px}
+.hubs{font-size:9.5px;font-weight:600;fill:#6E7186;text-anchor:middle;dominant-baseline:middle}
+.readout{text-align:center;font-size:.83rem;color:var(--muted);min-height:2.5rem;margin-bottom:.2rem}
+.readout b{color:var(--ink);font-size:.92rem}
+.readout em{font-style:normal;display:block;font-size:.76rem}
+
+.toggle{display:flex;gap:.3rem;justify-content:center;margin-bottom:.5rem}
+.toggle button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:.25rem .7rem;
+ font:inherit;font-size:.76rem;font-weight:600;color:var(--muted);cursor:pointer}
+.toggle button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+.grp{margin-bottom:.55rem}
+.grp .t2{font-size:.72rem;font-weight:700;color:var(--muted);margin-bottom:.22rem}
+.grp .t2 em{font-style:normal;font-weight:500}
+.w{display:inline-block;border:1px solid var(--line);background:#fff;border-radius:999px;padding:.3rem .64rem;
+ font:inherit;font-size:.81rem;font-weight:600;margin:0 .28rem .28rem 0;cursor:pointer;color:var(--ink)}
+.w:hover{border-color:#B9BEE8}
+.w.sel{background:var(--accent);border-color:var(--accent);color:#fff}
+
+.row{display:flex;align-items:center;gap:.6rem;padding:.58rem .75rem;border:1px solid var(--line);border-radius:12px;
+ margin-bottom:.42rem;font-size:.86rem;cursor:pointer;background:#fff;transition:border-color .15s,background .15s}
+.row:hover{border-color:#C3C8EC}
+.row.sel{border-color:var(--accent);background:#F2F4FF}
+.row .dot{width:9px;height:9px;border-radius:50%;flex:none}
+.row .lbl{flex:1}
+.row .tick{color:var(--accent);font-weight:700;opacity:0}
+.row.sel .tick{opacity:1}
+.addrow{display:flex;gap:.4rem;margin-top:.55rem}
+.addrow input{flex:1;border:1px dashed #C5C9E0;border-radius:10px;padding:.5rem .7rem;font:inherit;font-size:.83rem;background:var(--soft)}
+.addrow input:focus{outline:2px solid var(--accent);outline-offset:1px;background:#fff}
+.addrow button{border:0;background:var(--ink);color:#fff;border-radius:10px;padding:.5rem .8rem;font:inherit;
+ font-weight:700;font-size:.8rem;cursor:pointer}
+.hintline{font-size:.74rem;color:var(--muted);margin:.35rem 0 0}
+.note{background:var(--soft);border-radius:12px;padding:.68rem .85rem;font-size:.8rem;color:var(--muted);margin:.75rem 0 0}
+.note.tint{background:#EEF3FF;color:#3D53B8}
+.note.calm{background:#EAF7F1;color:#1E7A5E}
+.note.hi{background:var(--hi-b);color:var(--hi)}
+.mean{border-left:3px solid var(--line);padding:.1rem 0 .1rem .7rem;margin-bottom:.7rem}
+.mean b{display:block;font-size:.9rem}
+.mean .par{display:block;font-size:.73rem;color:var(--muted);font-weight:600;margin-bottom:.12rem}
+.mean .tx{font-size:.82rem;color:#54576B}
+.btn{width:100%;border:0;border-radius:12px;padding:.72rem;font:inherit;font-weight:700;font-size:.87rem;
+ background:var(--accent);color:#fff;cursor:pointer;margin-top:.85rem}
+.btn:disabled{background:#C9CCE4;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--muted);font-weight:600;margin-top:.35rem;padding:.5rem}
+.btn.ghost:hover{color:var(--ink)}
+.btn.calm{background:#1E7A5E}
+.btn.hi{background:var(--hi)}
+.breathe{width:112px;height:112px;border-radius:50%;margin:1.1rem auto;background:var(--hi-b);
+ display:flex;align-items:center;justify-content:center;color:var(--hi);font-weight:700;font-size:.86rem;
+ animation:br 8s ease-in-out infinite}
+@keyframes br{0%,100%{transform:scale(.82)}50%{transform:scale(1.1)}}
+.comment{position:sticky;top:2rem}
+.comment .why{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:1.15rem 1.3rem}
+.comment h3{font-size:1.05rem;font-weight:700;margin:0 0 .5rem;letter-spacing:-.015em}
+.comment p{margin:0 0 .7rem;font-size:.9rem;color:#4A4D61}
+.comment p:last-child{margin-bottom:0}
+.comment .k{font-weight:700;color:var(--ink)}
+.badge{display:inline-block;font-size:.7rem;font-weight:700;padding:.22rem .5rem;border-radius:6px;
+ background:#EEF0FF;color:var(--accent);margin-bottom:.6rem}
+.badge.warn{background:#FFF0E8;color:#B4551A}
+.nav{display:flex;gap:.5rem;margin-top:1rem}
+.nav button{flex:1;border:1px solid var(--line);background:#fff;border-radius:10px;padding:.55rem;font:inherit;
+ font-size:.82rem;font-weight:600;color:var(--muted);cursor:pointer}
+.nav button:hover:not(:disabled){color:var(--ink);border-color:#C3C8EC}
+.nav button:disabled{opacity:.4;cursor:not-allowed}
+/* ---------- house scene ---------- */
+.scene{margin:.2rem -.2rem .1rem;border-radius:18px;overflow:hidden;background:#F3EFF8}
+svg.house{width:100%;height:auto;display:block}
+.hbody{animation:hbreathe 9s ease-in-out infinite;transform-box:view-box;transform-origin:50% 92%}
+@keyframes hbreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.008)}}
+.smoke{animation:puff 7s ease-out infinite;transform-box:view-box}
+@keyframes puff{0%{opacity:0;transform:translate(0,0) scale(.5)}
+ 18%{opacity:.5}70%{opacity:.18}100%{opacity:0;transform:translate(7px,-26px) scale(1.5)}}
+.tree{animation:sway 7.5s ease-in-out infinite;transform-box:view-box;transform-origin:50% 100%}
+@keyframes sway{0%,100%{transform:rotate(-1.1deg)}50%{transform:rotate(1.1deg)}}
+.fly{animation:twk 5s ease-in-out infinite}
+@keyframes twk{0%,100%{opacity:.15;transform:translateY(0)}50%{opacity:.8;transform:translateY(-3px)}}
+.win{cursor:pointer;outline:none}
+.win .pane{transition:fill .25s ease,stroke-width .2s ease}
+.win .halo{opacity:0;transition:opacity .3s ease}
+.win.lit .halo{opacity:.5}
+.win:focus-visible .frame{stroke:#20222E;stroke-width:2.6}
+.win .glowpulse{animation:gp 6s ease-in-out infinite}
+@keyframes gp{0%,100%{opacity:.42}50%{opacity:.82}}
+.wlab{text-anchor:middle;dominant-baseline:middle;font-weight:700;fill:#2B2536;pointer-events:none}
+.hcap{text-align:center;font-size:.78rem;color:var(--muted);margin:.45rem 0 .1rem}
+
+.detail{border-radius:16px;padding:.85rem .95rem;margin-top:.55rem;border:1px solid var(--line);
+ background:var(--soft);transition:background .3s ease,border-color .3s ease}
+.detail .dw{font-size:1.05rem;font-weight:700;letter-spacing:-.01em}
+.detail .dp{font-size:.73rem;font-weight:600;opacity:.75;margin-bottom:.25rem}
+.detail .dt{font-size:.87rem;line-height:1.5}
+.detail.empty{text-align:center;color:var(--muted);font-size:.83rem;padding:1rem .9rem}
+.more{margin-top:.5rem}
+.more .mlbl{font-size:.72rem;font-weight:700;color:var(--muted);margin-bottom:.25rem}
+
+@media(prefers-reduced-motion:reduce){*{transition:none!important}.breathe{animation:none}
+ .hbody,.smoke,.tree,.fly,.win .glowpulse{animation:none}}
+</style>
+</head>
+<body>
+<div class="page">
+<header>
+  <h1>Zone first, then the wheel</h1>
+  <p>The ZER band decides which words a person sees. Low arousal opens Bad and Sad;
+     high arousal opens Disgusted, Angry and Fearful. Outer ring only, and the
+     follow-up questions are shaped by the zone rather than shared between them.</p>
+</header>
+<div class="map" id="map"></div>
+<div class="stage">
+  <div>
+    <div class="phone">
+      <div class="status"><span>9:41</span><span>▮▮▮ ᯤ ▮</span></div>
+      <div class="screen" id="screen"></div>
+    </div>
+    <div class="nav"><button id="back">Back</button><button id="reset">Start over</button></div>
+  </div>
+  <div class="comment" id="comment"></div>
+</div>
+</div>
+
+<script>
+/* ================= outer ring, grouped by middle ring ================= */
+const CAT={
+ bad:{n:'Bad',c:'#22A57F',g:[['Tired',['Sleepy','Unfocused']],['Stressed',['Out of control','Overwhelmed']],
+   ['Busy',['Pressured','Rushed']],['Bored',['Indifferent','Apathetic']]]},
+ sad:{n:'Sad',c:'#3E7BC9',g:[['Lonely',['Isolated','Abandoned']],['Vulnerable',['Victimised','Fragile']],
+   ['Despair',['Grief','Powerless']],['Guilty',['Ashamed','Remorseful']],['Depressed',['Empty','Inferior']],
+   ['Hurt',['Let down by someone','Embarrassed']]]},
+ disgusted:{n:'Disgusted',c:'#6F7488',g:[['Disapproving',['Judgmental','Uncomfortable']],
+   ['Disappointed',['Appalled','Revolted']],['Awful',['Nauseated','Detestable']],['Repelled',['Horrified','Hesitant']]]},
+ angry:{n:'Angry',c:'#D64A44',g:[['Let down',['Betrayed','Resentful']],['Humiliated',['Disrespected','Ridiculed']],
+   ['Bitter',['Indignant','Violated']],['Mad',['Furious','Jealous']],['Aggressive',['Provoked','Hostile']],
+   ['Frustrated',['Infuriated','Annoyed']],['Distant',['Withdrawn','Numb']],['Critical',['Sceptical','Dismissive']]]},
+ fearful:{n:'Fearful',c:'#DB7C2A',g:[['Scared',['Helpless','Frightened']],['Anxious',['On edge','Worried']],
+   ['Insecure',['Inadequate','Not good enough']],['Weak',['Worthless','Insignificant']],
+   ['Rejected',['Excluded','Persecuted']],['Threatened',['Nervous','Exposed']]]},
+ happy:{n:'Happy',c:'#E9A81F',g:[['Playful',['Energised','Cheeky']],['Content',['Free','Joyful']],
+   ['Interested',['Curious','Inquisitive']],['Proud',['Successful','Confident']],['Accepted',['Respected','Valued']],
+   ['Powerful',['Courageous','Creative']],['Peaceful',['Loving','Thankful']],['Trusting',['Sensitive','Intimate']],
+   ['Optimistic',['Hopeful','Inspired']]]},
+ surprised:{n:'Surprised',c:'#8B6FD0',g:[['Startled',['Shocked','Dismayed']],['Confused',['Disillusioned','Perplexed']],
+   ['Amazed',['Astonished','Awe']],['Excited',['Eager','Energetic']]]}
+};
+const ZONES={
+ lo:{key:'lo',name:'Low Zone',tag:'Hypo-arousal',desc:'Numbness, exhaustion, low mood',cats:['bad','sad'],
+     c:'#3E7BC9',bg:'#DFEAF8'},
+ zn:{key:'zn',name:'In the zone',tag:'Regulated',desc:'Calm, focused, able to adapt',cats:['happy','surprised'],
+     c:'#1E7A5E',bg:'#E3F5EE'},
+ hi:{key:'hi',name:'High Zone',tag:'Hyper-arousal',desc:'Panic, rage, edginess, racing',cats:['disgusted','angry','fearful'],
+     c:'#8B4FB0',bg:'#F1E7F8'}
+};
+const MEAN={
+'Sleepy':'Your body wants rest. Nothing complicated about it.',
+'Unfocused':'You are running low and it is hard to think straight.',
+'Out of control':'Things are moving and you are not the one steering.',
+'Overwhelmed':'More is coming at you than you can take at once.',
+'Pressured':'There is a lot on you and not much give.',
+'Rushed':'You are going fast and still falling behind.',
+'Indifferent':'You are not feeling much about it either way.',
+'Apathetic':'It is hard to care about much right now.',
+'Isolated':'You are on your own and it is starting to weigh.',
+'Abandoned':'It feels like people are not there for you.',
+'Victimised':'Something happened to you that you did not choose.',
+'Fragile':'It feels like not much more would tip you over.',
+'Grief':'You have lost something and it is still raw.',
+'Powerless':'You cannot see a way to change any of it.',
+'Ashamed':'You do not feel good about who you were in it.',
+'Remorseful':'You wish you had done it differently.',
+'Empty':'There is not much in there right now.',
+'Inferior':'You feel like less than the people around you.',
+'Let down by someone':'Someone did not come through and it stung.',
+'Embarrassed':'Something exposed you and you are still sore about it.',
+'Judgmental':'This does not sit right with you.',
+'Uncomfortable':'You would rather not be near this.',
+'Appalled':'You did not think it would go this way.',
+'Revolted':'It is worse than you expected and it turns your stomach.',
+'Nauseated':'This is hard to even sit with.',
+'Detestable':'You want nothing to do with it.',
+'Horrified':'Something shook you badly.',
+'Hesitant':'Something is telling you to hold back.',
+'Betrayed':'Someone you trusted did not come through.',
+'Resentful':'You are still carrying something someone did.',
+'Disrespected':'You were not treated the way you should have been.',
+'Ridiculed':'You were made to look small in front of people.',
+'Indignant':'Something unfair happened and it is not settled.',
+'Violated':'A line got crossed that should not have been.',
+'Furious':'The anger is hot and right at the surface.',
+'Jealous':'Someone has something you wanted.',
+'Provoked':'Something pushed you and you are ready to push back.',
+'Hostile':'You are braced for a fight.',
+'Infuriated':'You have been blocked one time too many.',
+'Annoyed':'Something keeps getting in your way.',
+'Withdrawn':'You have stepped back from people on purpose.',
+'Numb':'You have stopped feeling much of anything.',
+'Sceptical':'You are not buying it.',
+'Dismissive':'You have already written it off.',
+'Helpless':'Something is wrong and you cannot see what you could do.',
+'Frightened':'Something feels genuinely unsafe.',
+'On edge':'You cannot settle. Everything feels a bit too close.',
+'Worried':'Your mind keeps running ahead to what could go wrong.',
+'Inadequate':'You are not sure you are enough for what is being asked.',
+'Not good enough':'You are measuring yourself against others and coming up short.',
+'Worthless':'It is hard to see what you bring right now.',
+'Insignificant':'You feel easy to overlook.',
+'Excluded':'You are on the outside of something you wanted to be in.',
+'Persecuted':'It feels like you are being singled out.',
+'Nervous':'Something is coming and you are braced for it.',
+'Exposed':'You are out in the open with no cover.',
+'Energised':'You have energy and you want to use it.','Cheeky':'You are in a mischievous mood.',
+'Free':'Nothing is holding you down right now.','Joyful':'Things feel good, plain and simple.',
+'Curious':'Something has caught your attention.','Inquisitive':'You want to dig in and find out more.',
+'Successful':'Something you worked for came off.','Confident':'You trust yourself right now.',
+'Respected':'People here take you seriously.','Valued':'You matter to the people around you.',
+'Courageous':'You are ready to do the hard thing.','Creative':'Ideas are coming and you want to build something.',
+'Loving':'You feel close to people.','Thankful':'You are glad about what you have got.',
+'Sensitive':'You are open and tuned in.','Intimate':'You feel safe being close to someone.',
+'Hopeful':'You think things can work out.','Inspired':'Something has lit you up and you want to act on it.',
+'Shocked':'Something hit you out of nowhere.','Dismayed':'Something happened and it was not what you wanted.',
+'Disillusioned':'Something you believed in did not hold up.','Perplexed':'You cannot make sense of it yet.',
+'Astonished':'You did not think that was possible.','Awe':'Something was bigger than you expected.',
+'Eager':'You cannot wait to get going.','Energetic':'You have energy and want to move.'
+};
+const FLAG=['Worthless','Powerless','Grief','Empty','Numb','Isolated','Abandoned','Ashamed',
+            'Victimised','Helpless','Insignificant','Apathetic','Persecuted'];
+
+function wordsFor(z){const out=[];ZONES[z].cats.forEach(k=>{const c=CAT[k];
+  c.g.forEach(([t2,os])=>os.forEach(o=>out.push({w:o,t2,cat:k,c:c.c,cn:c.n})))});return out}
+const lookup=(z,w)=>wordsFor(z).find(x=>x.w===w);
+
+/* ================= state ================= */
+let S={step:0,zone:null,words:[],own:[],view:'wheel',picks:{},settled:false,after:null,openWord:null};
+const scr=document.getElementById('screen'),cmt=document.getElementById('comment');
+const clean=s=>s.trim();
+const chosen=()=>S.words.concat(S.own);
+const flagged=()=>S.words.some(w=>FLAG.includes(w));
+const isHi=()=>S.zone==='hi', isLo=()=>S.zone==='lo', isZn=()=>S.zone==='zn';
+
+const STEPS=()=>[
+ {t:'1',lab:'Where are you?'},
+ {t:'2',lab:S.zone?ZONES[S.zone].name+' wheel':'Routed wheel'},
+ {t:'3',lab:isHi()?'Settle first':'What it is about'},
+ {t:'4',lab:isHi()?'What it is about':(isLo()?'How long':'Note it')},
+ {t:'5',lab:isHi()?'Body + trigger':'What is still doable'},
+ {t:'6',lab:'What usually helps'},
+ {t:'7',lab:'What you could try'},
+ {t:'8',lab:'Check in again'}];
+
+function drawMap(){const m=document.getElementById('map');m.innerHTML='';
+ STEPS().forEach((s,i)=>{if(i)m.insertAdjacentHTML('beforeend','<span class="sep">›</span>');
+  const b=document.createElement('button');
+  const zc=(i>=1&&S.zone)?(S.zone==='hi'?' hi':S.zone==='lo'?' lo':''):'';
+  b.className='pip'+zc+(i===S.step?' here':'');
+  b.innerHTML='<span style="font-weight:700;opacity:.75;margin-right:.3rem">'+s.t+'</span>'+s.lab;
+  b.onclick=()=>{S.step=i;render()};m.appendChild(b)})}
+
+/* ================= wheel ================= */
+const NS='http://www.w3.org/2000/svg';
+const E=(n,a={})=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);return e};
+const pt=(cx,cy,r,a)=>{const t=(a-90)*Math.PI/180;return[cx+r*Math.cos(t),cy+r*Math.sin(t)]};
+function arc(cx,cy,ri,ro,a0,a1){const L=(a1-a0)>180?1:0;
+ const[x1,y1]=pt(cx,cy,ro,a0),[x2,y2]=pt(cx,cy,ro,a1),[x3,y3]=pt(cx,cy,ri,a1),[x4,y4]=pt(cx,cy,ri,a0);
+ return `M${x1} ${y1}A${ro} ${ro} 0 ${L} 1 ${x2} ${y2}L${x3} ${y3}A${ri} ${ri} 0 ${L} 0 ${x4} ${y4}Z`}
+const tint=(h,a)=>{const n=parseInt(h.slice(1),16),f=v=>Math.max(0,Math.min(255,Math.round(v+a)));
+ return '#'+[f(n>>16),f((n>>8)&255),f(n&255)].map(v=>v.toString(16).padStart(2,'0')).join('')};
+
+function bigWheel(list,ro_el){
+  const V=320,cx=160,cy=160,ri=68,ro=150;
+  const svg=E('svg',{class:'big',viewBox:'0 0 '+V+' '+V,role:'group','aria-label':'Feeling words'});
+  const step=360/list.length, fs=list.length>30?7.6:(list.length>22?8.4:9.2);
+  const z=ZONES[S.zone];
+  const hub=E('text',{class:'hubt',x:cx,y:cy-6,fill:z.c});hub.textContent=z.name;
+  const hs=E('text',{class:'hubs',x:cx,y:cy+11});hs.textContent=list.length+' words';
+  list.forEach((it,i)=>{
+    const a0=i*step,a1=a0+step,mid=a0+step/2;
+    const g=E('g',{class:'seg'+(S.words.includes(it.w)?' pick':''),tabindex:'0',role:'button',
+      'aria-label':it.w+', part of feeling '+it.t2});
+    g.appendChild(E('path',{class:'sh',d:arc(cx,cy,ri,ro,a0,a1),fill:i%2?tint(it.c,30):tint(it.c,12)}));
+    const[lx,ly]=pt(cx,cy,(ri+ro)/2,mid);
+    let rot=mid-90; if(mid>180) rot+=180;
+    const t=E('text',{class:'wl',x:lx,y:ly,'font-size':fs,fill:'#1B1D28',
+      transform:'rotate('+rot+' '+lx+' '+ly+')'});
+    t.textContent=it.w; g.appendChild(t);
+    const on=()=>{svg.classList.add('dim');svg.querySelectorAll('.seg').forEach(s=>s.classList.remove('on'));
+      g.classList.add('on');ro_el.innerHTML='<b>'+it.w+'</b><em>part of feeling '+it.t2.toLowerCase()
+      +' · '+it.cn+'</em>'};
+    const off=()=>{svg.classList.remove('dim');g.classList.remove('on');ro_el.innerHTML='&nbsp;'};
+    g.addEventListener('mouseenter',on);g.addEventListener('mouseleave',off);
+    g.addEventListener('focus',on);g.addEventListener('blur',off);
+    const tog=()=>{const j=S.words.indexOf(it.w);if(j>-1)S.words.splice(j,1);else S.words.push(it.w);render()};
+    g.addEventListener('click',tog);
+    g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();tog()}});
+    svg.appendChild(g);
+  });
+  svg.appendChild(E('circle',{cx,cy,r:ri-8,fill:'#fff',stroke:'#E4E6F0','stroke-width':'1.5'}));
+  svg.append(hub,hs);
+  return svg;
+}
+
+/* ================= shared option block ================= */
+function optBlock(id,arr,color,key){
+ return '<div id="'+id+'">'+arr.map(x=>'<div class="row" data-v="'+x+'"><span class="dot" style="background:'+color
+  +'"></span><span class="lbl">'+x+'</span><span class="tick">✓</span></div>').join('')
+  +(S.picks[key]||[]).map(x=>'<div class="row sel"><span class="dot" style="background:'+color
+  +'"></span><span class="lbl">'+x+'</span><span class="tick">✓</span></div>').join('')
+  +'<div class="addrow"><input id="'+id+'-i" placeholder="Something else? Type it here" maxlength="70">'
+  +'<button id="'+id+'-b">Add</button></div>'
+  +'<p class="hintline">Your own words are fine. Nothing here is a fixed list.</p></div>'}
+function wireOpt(id,key){
+ scr.querySelectorAll('#'+id+' .row').forEach(r=>r.onclick=()=>r.classList.toggle('sel'));
+ const i=document.getElementById(id+'-i'),b=document.getElementById(id+'-b');
+ const add=()=>{const v=clean(i.value);if(!v)return;S.picks[key]=(S.picks[key]||[]).concat(v);i.value='';render()};
+ b.onclick=add;i.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();add()}}}
+
+/* ================= screens ================= */
+function render(){drawMap();scr.scrollTop=0;
+ document.getElementById('back').disabled=S.step===0;
+ [z1,z2,z3,z4,z5,z6,z7,z8][S.step]();drawComment()}
+
+/* 1 — ZER band */
+function z1(){
+  scr.innerHTML='<p class="eyebrow">CHECK IN</p><h2 class="q">Where are you sitting right now?</h2>'
+   +'<p class="sub">Not how you think you should be. Just where you actually are.</p>'
+   +'<div class="zaxis"><div class="zlab">Arousal</div><div class="zbands">'
+   +['hi','zn','lo'].map(k=>{const z=ZONES[k];
+     return '<button class="band '+k+(S.zone===k?' on':'')+'" data-z="'+k+'"><b>'+z.name+'</b>'
+      +'<span>'+z.tag+' — '+z.desc+'</span></button>'}).join('')
+   +'</div></div>'
+   +(S.zone?'<div class="note" style="background:'+ZONES[S.zone].bg+';color:'+ZONES[S.zone].c+'">'
+     +'Next we will show you the words that usually sit in this zone — '
+     +ZONES[S.zone].cats.map(c=>CAT[c].n).join(', ')+'.</div>'
+     +'<button class="btn" id="n" style="background:'+ZONES[S.zone].c+'">Show me the words</button>':'');
+  scr.querySelectorAll('.band').forEach(b=>b.onclick=()=>{
+    if(S.zone!==b.dataset.z){S.zone=b.dataset.z;S.words=[]}render()});
+  const n=document.getElementById('n');if(n)n.onclick=()=>{S.step=1;render()};
+}
+
+/* 2 — routed wheel */
+function z2(){
+  if(!S.zone){S.step=0;return render()}
+  const z=ZONES[S.zone],list=wordsFor(S.zone);
+  let html='<p class="eyebrow" style="color:'+z.c+'">'+z.name.toUpperCase()+' · '+z.tag.toUpperCase()+'</p>'
+   +'<h2 class="q">'+(isHi()?'When it is running hot, which of these fits?'
+     :isLo()?'When things are flat, which of these fits?'
+     :'Good to hear. Which of these fits?')+'</h2>'
+   +'<p class="sub">These are the words that usually sit in this zone. Pick any that land — more than one is fine.</p>'
+   +'<div class="toggle"><button data-v="wheel" class="'+(S.view==='wheel'?'on':'')+'">Wheel</button>'
+   +'<button data-v="list" class="'+(S.view==='list'?'on':'')+'">List</button></div>';
+
+  if(S.view==='wheel') html+='<div class="wheelbox" id="wb"></div><div class="readout" id="ro">&nbsp;</div>';
+  else{
+    const byCat={};list.forEach(x=>{(byCat[x.cat]=byCat[x.cat]||[]).push(x)});
+    html+=Object.keys(byCat).map(k=>{const c=CAT[k];const seen={};
+      return c.g.map(([t2,os])=>'<div class="grp"><div class="t2">When it is more like <em>'+t2.toLowerCase()+'</em></div>'
+        +os.map(o=>'<button class="w'+(S.words.includes(o)?' sel':'')+'" data-w="'+o+'">'+o+'</button>').join('')
+        +'</div>').join('')}).join('');
+  }
+  html+='<div class="addrow"><input id="own" placeholder="None of these? Say it your way" maxlength="70">'
+   +'<button id="ownb">Add</button></div>'
+   +'<p class="hintline">If your word is not here, yours is the better one. Add it.</p>'
+   +'<button class="btn ghost" id="other">Not seeing it? Show the other zone\u2019s words</button>'
+   +(chosen().length?'<div class="note calm">You picked: <b>'+chosen().join(', ')+'</b></div>'
+     +'<button class="btn" id="n" style="background:'+z.c+'">That is about right</button>':'');
+  scr.innerHTML=html;
+
+  if(S.view==='wheel') document.getElementById('wb').appendChild(bigWheel(list,document.getElementById('ro')));
+  scr.querySelectorAll('.toggle button').forEach(b=>b.onclick=()=>{S.view=b.dataset.v;render()});
+  scr.querySelectorAll('.w[data-w]').forEach(b=>b.onclick=()=>{
+    const w=b.dataset.w,i=S.words.indexOf(w);if(i>-1)S.words.splice(i,1);else S.words.push(w);render()});
+  const oi=document.getElementById('own');
+  const add=()=>{const v=clean(oi.value);if(!v)return;S.own.push(v);oi.value='';render()};
+  document.getElementById('ownb').onclick=add;
+  oi.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();add()}};
+  document.getElementById('other').onclick=()=>{
+    S.zone=isHi()?'lo':isLo()?'hi':'lo';S.words=[];render()};
+  const n=document.getElementById('n');if(n)n.onclick=()=>{S.step=2;render()};
+}
+
+/* 3 — HIGH: settle first / LOW+ZN: meaning */
+function z3(){
+  if(isHi()){
+    scr.innerHTML='<p class="eyebrow" style="color:var(--hi)">BEFORE ANYTHING ELSE</p>'
+     +'<h2 class="q">Want to take a minute first?</h2>'
+     +'<p class="sub">When things are running this hot, thinking it through is hard. '
+     +'Settling your body first usually makes the rest easier. Sixty seconds.</p>'
+     +'<div class="breathe">breathe</div>'
+     +'<div class="note hi">In for four, hold for four, out for six. Follow the circle.</div>'
+     +'<button class="btn hi" id="n">'+(S.settled?'Done — carry on':'I did that')+'</button>'
+     +'<button class="btn ghost" id="s">Skip it, I want to talk it out</button>';
+    document.getElementById('n').onclick=()=>{S.settled=true;S.step=3;render()};
+    document.getElementById('s').onclick=()=>{S.step=3;render()};
+    return;
+  }
+  z4();
+}
+
+/* 4 — meaning */
+const OWNC='#C79A4E';
+const mixc=(a,b,t)=>{const A=parseInt(a.slice(1),16),B=parseInt(b.slice(1),16);
+ const f=(x,y)=>Math.round(x+(y-x)*t);
+ return '#'+[f(A>>16,B>>16),f((A>>8)&255,(B>>8)&255),f(A&255,B&255)]
+   .map(v=>v.toString(16).padStart(2,'0')).join('')};
+const LIT='#FFE7BE', GLOW='#FFF4E0';
+function anyLookup(w){for(const k in CAT){const c=CAT[k];
+  for(const[t2,os]of c.g)if(os.includes(w))return{w,t2,c:c.c,cn:c.n}}return null}
+function rowsOf(n){return{1:[1],2:[2],3:[3],4:[2,2],5:[3,2],6:[3,3]}[n]||[3,3]}
+function wrap2(s,max){if(s.length<=max||s.indexOf(' ')<0)return[s];
+  const p=s.split(' ');let a='',b='';
+  for(const t of p){ if((a+' '+t).trim().length<=Math.ceil(s.length/2)||!a) a=(a+' '+t).trim(); else b=(b+' '+t).trim() }
+  return b?[a,b]:[a]}
+
+function houseSVG(items){
+  const V=340,H=292;
+  const X0=64,X1=276,BODY_Y=112,BODY_B=252;
+  const WX0=80,WX1=260,WY0=126,WY1=214,GAP=8;
+  const rows=rowsOf(items.length),nRows=rows.length;
+  const wh=nRows===1?62:Math.floor((WY1-WY0-GAP)/2);
+  let out='',idx=0;
+  rows.forEach((cnt,r)=>{
+    const ww=Math.floor(((WX1-WX0)-(cnt-1)*GAP)/cnt);
+    const totalW=cnt*ww+(cnt-1)*GAP;
+    const sx=WX0+((WX1-WX0)-totalW)/2;
+    const y=WY0+r*(wh+GAP);
+    for(let i=0;i<cnt&&idx<items.length;i++,idx++){
+      const it=items[idx],x=sx+i*(ww+GAP);
+      const lit=S.openWord===it.w;
+      const fs=nRows===1?9.4:7.9;
+      const lines=wrap2(it.w,nRows===1?14:11);
+      const ly=y+wh/2-(lines.length>1?fs*0.58:0);
+      out+='<g class="win'+(lit?' lit':'')+'" data-w="'+it.w.replace(/"/g,'&quot;')+'" tabindex="0" role="button"'
+       +' aria-label="'+it.w+', tap to read what it might be about">'
+       +'<rect class="halo" x="'+(x-5)+'" y="'+(y-5)+'" width="'+(ww+10)+'" height="'+(wh+10)+'" rx="9" fill="'+it.c+'" opacity="0"/>'
+       +'<rect class="pane" x="'+x+'" y="'+y+'" width="'+ww+'" height="'+wh+'" rx="5" fill="'+mixc(it.c,LIT,lit?.52:.74)+'"/>'
+       +'<rect class="glowpulse" x="'+x+'" y="'+y+'" width="'+ww+'" height="'+wh+'" rx="5" fill="'+mixc(it.c,GLOW,.86)+'"'
+       +' style="animation-duration:'+(5+(idx%4)*0.9).toFixed(1)+'s" opacity=".5"/>'
+       +'<line x1="'+(x+ww/2)+'" y1="'+y+'" x2="'+(x+ww/2)+'" y2="'+(y+wh)+'" stroke="'+mixc(it.c,'#6B5B45',.35)+'" stroke-width="1" opacity=".45"/>'
+       +'<line x1="'+x+'" y1="'+(y+wh/2)+'" x2="'+(x+ww)+'" y2="'+(y+wh/2)+'" stroke="'+mixc(it.c,'#6B5B45',.35)+'" stroke-width="1" opacity=".45"/>'
+       +'<rect class="frame" x="'+x+'" y="'+y+'" width="'+ww+'" height="'+wh+'" rx="5" fill="none" stroke="'+it.c+'" stroke-width="'+(lit?2.4:1.5)+'"/>'
+       +lines.map((L,k)=>'<text class="wlab" x="'+(x+ww/2)+'" y="'+(ly+k*fs*1.16)+'" font-size="'+fs+'">'+L+'</text>').join('')
+       +'</g>';
+    }
+  });
+
+  const flies=[[92,86,0],[268,74,1.4],[300,120,2.6],[56,132,3.4],[196,66,4.2]]
+    .map(([x,y,d])=>'<circle class="fly" cx="'+x+'" cy="'+y+'" r="1.9" fill="#F6D98E" style="animation-delay:'+d+'s"/>').join('');
+  const smoke=[0,2.3,4.6].map(d=>'<circle class="smoke" cx="238" cy="66" r="5" fill="#CFC6DE" style="animation-delay:'+d+'s"/>').join('');
+
+  return '<svg class="house" viewBox="0 0 '+V+' '+H+'" role="img" aria-label="A house holding the feelings you picked">'
+   +'<defs>'
+   +'<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">'
+   +'<stop offset="0" stop-color="#EFE6F6"/><stop offset="55%" stop-color="#F6EAF0"/><stop offset="100%" stop-color="#FBF0E6"/></linearGradient>'
+   +'<linearGradient id="wall" x1="0" y1="0" x2="0" y2="1">'
+   +'<stop offset="0" stop-color="#FFFDFB"/><stop offset="100%" stop-color="#F3ECF4"/></linearGradient>'
+   +'<linearGradient id="roofg" x1="0" y1="0" x2="1" y2="1">'
+   +'<stop offset="0" stop-color="#8E7FA8"/><stop offset="100%" stop-color="#6F6390"/></linearGradient>'
+   +'<radialGradient id="warm" cx="50%" cy="88%" r="62%">'
+   +'<stop offset="0" stop-color="#FFE9C9" stop-opacity=".85"/><stop offset="100%" stop-color="#FFE9C9" stop-opacity="0"/></radialGradient>'
+   +'</defs>'
+   +'<rect width="'+V+'" height="'+H+'" fill="url(#sky)"/>'
+   +flies
+   +'<ellipse cx="170" cy="262" rx="180" ry="46" fill="url(#warm)"/>'
+   +'<path d="M0 250 Q70 232 150 248 T340 240 L340 292 L0 292Z" fill="#E6DCEC"/>'
+   +'<path d="M0 266 Q90 252 180 264 T340 258 L340 292 L0 292Z" fill="#DCD1E6"/>'
+   +'<g class="tree"><rect x="304" y="218" width="7" height="40" rx="3" fill="#9C8AA8"/>'
+   +'<circle cx="307" cy="204" r="24" fill="#BBD6C4"/><circle cx="293" cy="216" r="15" fill="#A9CBB6"/>'
+   +'<circle cx="320" cy="217" r="13" fill="#C7DFCF"/></g>'
+   +'<g class="hbody">'
+   +smoke
+   +'<rect x="228" y="64" width="20" height="34" rx="3" fill="#7E7199"/>'
+   +'<path d="M'+X0+' '+BODY_Y+' L170 52 L'+X1+' '+BODY_Y+' Z" fill="url(#roofg)"/>'
+   +'<path d="M'+(X0-10)+' '+BODY_Y+' L'+(X1+10)+' '+BODY_Y+' L'+X1+' '+(BODY_Y+9)+' L'+X0+' '+(BODY_Y+9)+' Z" fill="#5E5480"/>'
+   +'<rect x="'+X0+'" y="'+(BODY_Y+8)+'" width="'+(X1-X0)+'" height="'+(BODY_B-BODY_Y-8)+'" rx="7" fill="url(#wall)"/>'
+   +'<rect x="152" y="216" width="36" height="36" rx="4" fill="#C2A98C"/>'
+   +'<rect x="152" y="216" width="36" height="36" rx="4" fill="none" stroke="#A88F72" stroke-width="1.4"/>'
+   +'<circle cx="181" cy="235" r="2" fill="#7E6A53"/>'
+   +'</g>'
+   +out
+   +'</svg>';
+}
+
+function z4(){
+  const items=S.words.map(w=>{const f=lookup(S.zone,w)||anyLookup(w)||{t2:'',c:'#9AA0B5',cn:''};
+      return{w,t2:f.t2,c:f.c,cn:f.cn,own:false}})
+    .concat(S.own.map(w=>({w,t2:'',c:OWNC,cn:'',own:true})));
+  if(!items.length){S.step=1;return render()}
+  const shown=items.slice(0,6),extra=items.slice(6);
+  if(S.openWord&&!items.some(i=>i.w===S.openWord))S.openWord=null;
+  const cur=items.find(i=>i.w===S.openWord);
+
+  scr.innerHTML='<p class="eyebrow">WHAT IT MIGHT BE ABOUT</p>'
+   +'<h2 class="q">Here is what that might be about</h2>'
+   +'<p class="sub">Everything you picked is in here right now. Tap a window to see what it might mean.</p>'
+   +'<div class="scene" id="scene">'+houseSVG(shown)+'</div>'
+   +'<p class="hcap">'+(items.length===1?'One feeling, sitting in the house.'
+      :items.length+' feelings, all in the house at once. That is normal.')+'</p>'
+   +(extra.length?'<div class="more"><div class="mlbl">ALSO INSIDE</div>'
+      +extra.map(i=>'<button class="w'+(S.openWord===i.w?' sel':'')+'" data-w="'+i.w.replace(/"/g,'&quot;')+'">'+i.w+'</button>').join('')
+      +'</div>':'')
+   +'<div class="detail'+(cur?'':' empty')+'" id="detail" aria-live="polite"'
+     +(cur?' style="background:'+mixc(cur.c,'#FFFFFF',.88)+';border-color:'+mixc(cur.c,'#FFFFFF',.62)+'"':'')+'>'
+   +(cur?'<div class="dw" style="color:'+mixc(cur.c,'#1A1620',.3)+'">'+cur.w+'</div>'
+        +'<div class="dp">'+(cur.own?'your own word':'part of feeling '+cur.t2.toLowerCase()+' · '+cur.cn)+'</div>'
+        +'<div class="dt">'+(cur.own?'We will keep this exactly as you said it.':(MEAN[cur.w]||''))+'</div>'
+      :'Tap a lit window above to read what that feeling might be about.')
+   +'</div>'
+   +'<div class="note tint">None of this is a problem with you. It is just information.</div>'
+   +'<button class="btn" id="n">Yes, that is it</button><button class="btn ghost" id="b">Not really</button>';
+
+  const open=w=>{S.openWord=(S.openWord===w?null:w);render()};
+  scr.querySelectorAll('.win').forEach(g=>{
+    g.addEventListener('click',()=>open(g.dataset.w));
+    g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open(g.dataset.w)}});
+  });
+  scr.querySelectorAll('.more .w').forEach(b=>b.onclick=()=>open(b.dataset.w));
+  document.getElementById('n').onclick=()=>{S.step=4;render()};
+  document.getElementById('b').onclick=()=>{S.step=1;render()};
+}
+
+/* 5 — zone-shaped awareness */
+function z5(){
+  if(isZn()){
+    scr.innerHTML='<p class="eyebrow">WORTH KEEPING</p><h2 class="q">Anything you want to remember about today?</h2>'
+     +'<p class="sub">Good days are a pattern too. One line is plenty.</p>'
+     +optBlock('zq',['Something went well','A good conversation','I got proper rest','Progress on something that matters'],
+       '#E9A81F','zq')+'<button class="btn calm" id="n">Save it</button>';
+    wireOpt('zq','zq');document.getElementById('n').onclick=()=>{S.step=5;render()};return;
+  }
+  if(isHi()){
+    scr.innerHTML='<p class="eyebrow" style="color:var(--hi)">WHERE IT SITS</p>'
+     +'<h2 class="q">Where do you feel it in your body?</h2>'
+     +'<p class="sub">High-zone feelings usually show up physically before you can name them. Tap what fits.</p>'
+     +optBlock('bod',['Chest — tight or racing','Jaw, neck or shoulders','Stomach','Hands — shaky or clenched',
+       'Head — hot or buzzing','I cannot place it'],'#8B4FB0','bod')
+     +'<button class="btn hi" id="n">Carry on</button>';
+    wireOpt('bod','bod');document.getElementById('n').onclick=()=>{S.step=5;render()};return;
+  }
+  scr.innerHTML='<p class="eyebrow" style="color:var(--lo)">HOW LONG</p>'
+   +'<h2 class="q">How long has it felt like this?</h2>'
+   +'<p class="sub">No wrong answer. It just helps to know.</p>'
+   +optBlock('dur',['Just today','A few days','A couple of weeks','Longer than that',
+     'Hard to say — it comes and goes'],'#3E7BC9','dur')
+   +'<button class="btn" id="n" style="background:var(--lo)">Carry on</button>';
+  wireOpt('dur','dur');document.getElementById('n').onclick=()=>{S.step=5;render()};
+}
+
+/* 6 — what usually helps */
+function z6(){
+  if(isZn()){S.step=6;return render()}
+  if(isHi()){
+    scr.innerHTML='<p class="eyebrow" style="color:var(--hi)">WHAT SET IT OFF</p>'
+     +'<h2 class="q">Do you know what set it off?</h2>'
+     +'<p class="sub">Sometimes there is a clear thing. Sometimes there is not, and that is fine too.</p>'
+     +optBlock('trg',['Something someone said or did','Being blocked on something','Too much at once',
+       'A deadline or pressure','It built up over days','I do not know'],'#8B4FB0','trg')
+     +'<p class="eyebrow" style="margin-top:1rem;color:var(--hi)">WHAT USUALLY WORKS</p>'
+     +'<h2 class="q">When it gets like this, what usually brings it down?</h2>'
+     +optBlock('hlp',['Getting away from the situation','Moving — a walk or stairs','Talking to someone',
+       'Writing it out','Slowing my breathing','Nothing really works'],'#8B4FB0','hlp')
+     +'<button class="btn hi" id="n">Carry on</button>';
+    wireOpt('trg','trg');wireOpt('hlp','hlp');
+    document.getElementById('n').onclick=()=>{S.step=6;render()};return;
+  }
+  scr.innerHTML='<p class="eyebrow" style="color:var(--lo)">WHAT IS STILL POSSIBLE</p>'
+   +'<h2 class="q">What still feels doable today?</h2>'
+   +'<p class="sub">Small counts. Pick the smallest true thing, not the best one.</p>'
+   +optBlock('doa',['Getting up and moving a bit','Messaging one person','One small task',
+     'Eating something','Honestly, nothing right now'],'#3E7BC9','doa')
+   +'<p class="eyebrow" style="margin-top:1rem;color:var(--lo)">WHO KNOWS</p>'
+   +'<h2 class="q">Is there anyone who knows you are feeling this way?</h2>'
+   +optBlock('who',['Yes, someone knows','Someone could, I have not told them',
+     'There is no one right now','I would rather not'],'#3E7BC9','who')
+   +'<button class="btn" id="n" style="background:var(--lo)">Carry on</button>';
+  wireOpt('doa','doa');wireOpt('who','who');
+  document.getElementById('n').onclick=()=>{S.step=6;render()};
+}
+
+/* 7 — support */
+function z7(){
+  const z=ZONES[S.zone]||ZONES.zn, f=flagged();
+  const sup=isHi()?['60-second reset','Step away for five minutes','Write it out before you reply','Thought check-in']
+    :isLo()?['Two-minute gentle movement','Message one person','One small thing off the list','Grounding exercise']
+    :['Save this to your patterns','Write down one good thing','Nothing — carry on'];
+  scr.innerHTML='<p class="eyebrow">THINGS YOU COULD TRY</p><h2 class="q">Here are a few things you could try</h2>'
+   +'<p class="sub">'+(isHi()?'Picked for bringing things down, not thinking them through.'
+     :isLo()?'All small on purpose. Small is the point when things are flat.'
+     :'Nothing needed here. Just keeping the record honest.')+'</p>'
+   +(f?'<div class="row sel" style="border-color:#2C7A5A;background:#EAF7F1"><span class="dot" style="background:#2C7A5A"></span>'
+     +'<span class="lbl"><b>Talk to a real person</b><br><span style="font-size:.76rem;color:#4A6E60">Private. Nobody at work is told.</span></span></div>':'')
+   +sup.map(s=>'<div class="row"><span class="dot" style="background:'+z.c+'"></span><span class="lbl">'+s+'</span></div>').join('')
+   +'<div class="note tint">Small steps, your way. None of this goes to your employer.</div>'
+   +'<button class="btn calm" id="n">Start one</button><button class="btn ghost" id="s">Save it for later</button>';
+  document.getElementById('n').onclick=()=>{S.step=7;render()};
+  document.getElementById('s').onclick=()=>{S.step=7;render()};
+}
+
+/* 8 — re-check zone */
+function z8(){
+  scr.innerHTML='<p class="eyebrow">CHECK IN AGAIN</p><h2 class="q">Where are you now?</h2>'
+   +'<p class="sub">Same three bands, a few minutes on. No score, no right answer.</p>'
+   +'<div class="zaxis"><div class="zlab">Arousal</div><div class="zbands">'
+   +['hi','zn','lo'].map(k=>{const z=ZONES[k];
+     return '<button class="band '+k+(S.after===k?' on':'')+'" data-z="'+k+'"><b>'+z.name+'</b>'
+      +'<span>'+z.tag+'</span></button>'}).join('')+'</div></div>'
+   +(S.after?'<div class="note calm"><b>Before:</b> '+ZONES[S.zone].name+' ('+(chosen()[0]||'')+')'
+     +' · <b>Now:</b> '+ZONES[S.after].name
+     +'<br>Saved as a shift within this session. Not a score, and not a measure of progress.</div>'
+     +'<button class="btn" id="d">Done</button>':'');
+  scr.querySelectorAll('.band').forEach(b=>b.onclick=()=>{S.after=b.dataset.z;render()});
+  const d=document.getElementById('d');
+  if(d)d.onclick=()=>{S={step:0,zone:null,words:[],own:[],view:'wheel',picks:{},settled:false,after:null,openWord:null};render()};
+}
+
+/* ================= commentary ================= */
+function drawComment(){
+ const N=[
+  ['Entry','The zone is the router',
+   'Three bands, matching your ZER diagram. Picking one decides which words load next: <span class="k">Low</span> opens Bad and Sad, <span class="k">High</span> opens Disgusted, Angry and Fearful. The middle band had no route in your brief, so it opens Happy and Surprised — without it, anyone who is actually fine hits a dead end.'],
+  ['Routing','Outer ring only, filtered by zone',
+   'Low shows 20 words, High shows 36, regulated shows 26. Labels run radially, the way the printed wheel does, because horizontal text collides past about 20 segments. A <span class="k">list view</span> sits alongside it — a 36-segment wheel is hard on a small screen and harder with low vision.'],
+  ['Watch this','Two taxonomies that do not align',
+   '<span class="k">Numb</span> and <span class="k">Withdrawn</span> sit under Angry, so your rule routes them to High — but numbness is the textbook low-zone symptom, named in your own diagram. The wheel sorts by emotion family; ZER sorts by arousal. They cross. I kept your mapping and added <span class="k">"show the other zone\u2019s words"</span> rather than re-sorting behind your back.'],
+  ['High only','Settle before you reflect',
+   'In hyper-arousal, reflection is hard and can wind things up further. So the High path opens with sixty seconds of breathing before any question, and it is skippable. The Low path has no equivalent — it goes straight to meaning, because asking someone flat to do an exercise first is a barrier, not a help.'],
+  ['Diverged','The questions are not shared',
+   'High asks <span class="k">where do you feel it in your body</span>, since high-zone states show up physically before they can be named. Low asks <span class="k">how long has it felt like this</span>, because duration is the thing that matters most when arousal is down.'],
+  ['Diverged','Different second questions too',
+   'High asks what set it off and what usually brings it down. Low asks what is still doable — <span class="k">"pick the smallest true thing, not the best one"</span> — and whether anyone knows. That second one is the most useful question on the low path and the one most flows leave out.'],
+  ['Support','Shaped by zone',
+   'High gets options for bringing things down. Low gets deliberately tiny ones. Thirteen words promote a human option to the top; on the low path, <span class="k">duration plus a flagged word plus "there is no one right now"</span> is the combination worth routing on, more than any single answer.'],
+  ['Close','A shift, not a score',
+   'Re-checking the band gives you a clean before-and-after on the same three-point scale. Resist turning it into a number. <span class="k">Zone is a state, not a measure</span> — the moment it is charted as a metric people start reporting the band they think they should be in.']
+ ][S.step];
+ cmt.innerHTML='<div class="why"><span class="badge'+(N[0]==='Watch this'?' warn':'')+'">'+N[0]+'</span>'
+  +'<h3>'+N[1]+'</h3><p>'+N[2]+'</p></div>';
+}
+document.getElementById('back').onclick=()=>{if(S.step>0){S.step--;render()}};
+document.getElementById('reset').onclick=()=>{S={step:0,zone:null,words:[],own:[],view:'wheel',picks:{},settled:false,after:null,openWord:null};render()};
+render();
+</script>
+</body>
+</html>
