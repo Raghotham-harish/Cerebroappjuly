@@ -47,7 +47,7 @@ export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
 
       <button onClick={() => onTabChange("chat")} style={btnStyle}>
         <AnimatedLogo size={22} animate={activeTab === "chat"} />
-        <span style={{ fontFamily: "Inter, sans-serif", fontSize: 11, color: s("chat").color, fontWeight: s("chat").weight, letterSpacing: "0.03em" }}>CHAT</span>
+        <span style={{ fontFamily: "Inter, sans-serif", fontSize: 11, color: s("chat").color, fontWeight: s("chat").weight, letterSpacing: "0.03em" }}>ORACLE</span>
       </button>
 
       <button onClick={() => onTabChange("tools")} style={btnStyle}>

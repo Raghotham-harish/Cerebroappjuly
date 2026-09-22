@@ -8,6 +8,18 @@ interface LoginScreenProps {
   onLogin: () => void;
 }
 
+const PERSONAL_PROVIDERS = [
+  "gmail.com","yahoo.com","yahoo.co.uk","yahoo.in","hotmail.com","outlook.com",
+  "outlook.in","live.com","icloud.com","me.com","mac.com","protonmail.com",
+  "proton.me","aol.com","zoho.com","yandex.com","yandex.ru","gmx.com",
+  "gmx.net","mail.com","rediffmail.com","inbox.com","fastmail.com",
+];
+
+function isPersonalEmail(email: string): boolean {
+  const domain = email.split("@")[1]?.toLowerCase() ?? "";
+  return PERSONAL_PROVIDERS.includes(domain);
+}
+
 export function LoginScreen({ onLogin }: LoginScreenProps) {
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
@@ -16,6 +28,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
   const [month, setMonth] = useState("");
   const [year, setYear] = useState("");
   const [ageError, setAgeError] = useState("");
+  const [emailError, setEmailError] = useState("");
 
   const calculateAge = (day: string, month: string, year: string) => {
     if (!day || !month || !year) return 0;
@@ -34,21 +47,28 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
 
   const handleEmailLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
+    // Validate personal email
+    if (email && !isPersonalEmail(email)) {
+      setEmailError("Please use a personal email address (Gmail, Outlook, Yahoo, iCloud, etc.)");
+      return;
+    }
+    setEmailError("");
+
     // Validate age for sign up
     if (isSignUp) {
       if (!day || !month || !year) {
         setAgeError("Please enter your complete date of birth");
         return;
       }
-      
+
       const age = calculateAge(day, month, year);
       if (age < 18) {
         setAgeError("You must be 18 or older to use CereBro");
         return;
       }
     }
-    
+
     setAgeError("");
     onLogin();
   };
@@ -83,13 +103,16 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
           <div>
             <input
               type="email"
-              placeholder="Email address"
+              placeholder="Personal email (Gmail, Outlook, Yahoo…)"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-6 py-4 rounded-full text-base border-2 border-purple-200 focus:border-purple-400 focus:outline-none transition-colors bg-white"
-              style={{ fontFamily: 'Inter, sans-serif', color: '#15113C' }}
+              onChange={(e) => { setEmail(e.target.value); setEmailError(""); }}
+              className="w-full px-6 py-4 rounded-full text-base border-2 focus:outline-none transition-colors bg-white"
+              style={{ fontFamily: 'Inter, sans-serif', color: '#15113C', borderColor: emailError ? "#EF4444" : undefined }}
               required
             />
+            {emailError && (
+              <p className="mt-2 px-4 text-xs" style={{ color: "#EF4444", fontFamily: "Inter, sans-serif" }}>{emailError}</p>
+            )}
           </div>
           <div>
             <input

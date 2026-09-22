@@ -284,7 +284,7 @@ export function AssessmentHubScreen({ onSelectAssessment, onBack }: AssessmentHu
                         className="flex-shrink-0 flex items-center justify-center"
                         style={{ width: 44, height: 44, borderRadius: 14, background: a.iconBg }}
                       >
-                        <Icon style={{ width: 20, height: 20, color: a.tagColor, strokeWidth: 1.75 }} />
+                        <Icon style={{ width: 20, height: 20, color: "#15113C", strokeWidth: 1.75 }} />
                       </div>
 
                       {/* Text */}

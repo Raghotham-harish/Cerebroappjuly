@@ -35,122 +35,44 @@ interface UserInfo {
 function AppContent() {
   const [appState, setAppState] = useState<AppState>("splash");
   const [userInfo, setUserInfo] = useState<UserInfo>({ name: "", gender: "" });
-  const [oracleConfig, setOracleConfig] = useState<OracleConfig>({
-    name: "",
-    avatarUrl: "",
-    voiceType: ""
-  });
+  const [oracleConfig, setOracleConfig] = useState<OracleConfig>({ name: "", avatarUrl: "", voiceType: "" });
   const [lifeSatisfactionScores, setLifeSatisfactionScores] = useState<number[]>([]);
   const [micPermissionGranted, setMicPermissionGranted] = useState(false);
   const [completedActivity, setCompletedActivity] = useState<'zer' | 'breathing' | 'gratitude' | 'tool' | null>(null);
 
   const { addIntent, intents, pillarProgress, totalPoints, currentStreak, updateStreak } = usePoints();
 
-  const handleSplashComplete = () => {
-    setAppState("login");
-  };
-
-  const handleLogin = () => {
-    setAppState("consent1");
-  };
-
-  const handleConsent1 = () => {
-    setAppState("consent2");
-  };
-
-  const handleConsent2 = () => {
-    setAppState("userInfo");
-  };
-
-  const handleUserInfoComplete = (info: UserInfo) => {
-    setUserInfo(info);
-    setAppState("oracleSetup");
-  };
-
-  const handleOracleSetupComplete = (config: OracleConfig) => {
-    setOracleConfig(config);
-    setAppState("companySelection");
-  };
-
+  const handleSplashComplete = () => setAppState("login");
+  const handleLogin = () => setAppState("consent1");
+  const handleConsent1 = () => setAppState("consent2");
+  const handleConsent2 = () => setAppState("userInfo");
+  const handleUserInfoComplete = (info: UserInfo) => { setUserInfo(info); setAppState("oracleSetup"); };
+  const handleOracleSetupComplete = (config: OracleConfig) => { setOracleConfig(config); setAppState("companySelection"); };
   const handleCompanySelectionComplete = (companyName: string, companyEmail: string, companyId?: string) => {
     setUserInfo(prev => ({ ...prev, company: companyName, companyEmail, companyId }));
     setAppState("psychologicalProfile");
   };
-
   const handlePsychologicalProfileComplete = (profile: ProfileData) => {
     setUserInfo(prev => ({ ...prev, psychologicalProfile: profile }));
     setAppState("dailyIntent");
   };
-
-  const handlePsychologicalProfileSkip = () => {
-    setAppState("dailyIntent");
-  };
-
+  const handlePsychologicalProfileSkip = () => setAppState("dailyIntent");
   const handleDailyIntentComplete = (dailyIntents: any[]) => {
-    // Add all daily intents to the points system
     dailyIntents.forEach(intent => addIntent(intent));
     setAppState("personalLeaderboard");
   };
-
-  const handlePersonalLeaderboardStart = () => {
-    updateStreak();
-    setAppState("chat");
-  };
-
-  const handleViewProgression = () => {
-    setAppState("progression");
-  };
-
-  const handleViewRewards = () => {
-    setAppState("rewards");
-  };
-
-  const handleCloseProgression = () => {
-    setAppState("chat");
-  };
-
-  const handleCloseRewards = () => {
-    setAppState("chat");
-  };
-
-  const handleLifeSatisfactionComplete = (scores: number[]) => {
-    setLifeSatisfactionScores(scores);
-    setAppState("zow");
-  };
-
-  const handleZERComplete = () => {
-    setCompletedActivity('zer');
-    setAppState("chat");
-  };
-
-  const handleStartChat = (mode: string) => {
-    setAppState("chat");
-  };
-
-  const handleCloseChat = () => {
-    setAppState("home");
-  };
-
-  const handleBurnoutAssessmentComplete = () => {
-    setAppState("burnoutResult");
-  };
-
-  const handleBurnoutResultContinue = () => {
-    setAppState("chat");
-  };
-
-  const handleViewBurnoutAnalytics = () => {
-    // This will be handled within ConversationalChat's InsightsScreen
-    setAppState("chat");
-  };
-
-  const handleBookCoach = () => {
-    setAppState("coachBooking");
-  };
-
-  const handleCoachBookingComplete = () => {
-    setAppState("chat");
-  };
+  const handlePersonalLeaderboardStart = () => { updateStreak(); setAppState("chat"); };
+  const handleCloseProgression = () => setAppState("chat");
+  const handleCloseRewards = () => setAppState("chat");
+  const handleLifeSatisfactionComplete = (scores: number[]) => { setLifeSatisfactionScores(scores); setAppState("zow"); };
+  const handleZERComplete = () => { setCompletedActivity('zer'); setAppState("chat"); };
+  const handleStartChat = (_mode: string) => setAppState("chat");
+  const handleCloseChat = () => setAppState("home");
+  const handleBurnoutAssessmentComplete = () => setAppState("burnoutResult");
+  const handleBurnoutResultContinue = () => setAppState("chat");
+  const handleViewBurnoutAnalytics = () => setAppState("chat");
+  const handleBookCoach = () => setAppState("coachBooking");
+  const handleCoachBookingComplete = () => setAppState("chat");
 
   return (
     <>
@@ -158,92 +80,21 @@ function AppContent() {
       {appState === "login" && <LoginScreen onLogin={handleLogin} />}
       {appState === "consent1" && <ConsentModal variant="disclaimer" onAccept={handleConsent1} />}
       {appState === "consent2" && <ConsentModal variant="privacy" onAccept={handleConsent2} />}
-      {appState === "userInfo" && (
-        <UserInfoCapture 
-          onComplete={handleUserInfoComplete} 
-          permissionGranted={micPermissionGranted}
-          onPermissionGranted={setMicPermissionGranted}
-        />
-      )}
-      {appState === "oracleSetup" && (
-        <OracleSetup
-          userName={userInfo.name}
-          onComplete={handleOracleSetupComplete}
-          permissionGranted={micPermissionGranted}
-          onPermissionGranted={setMicPermissionGranted}
-        />
-      )}
-      {appState === "companySelection" && (
-        <CompanySelection
-          userName={userInfo.name}
-          onComplete={handleCompanySelectionComplete}
-        />
-      )}
-      {appState === "psychologicalProfile" && (
-        <PsychologicalProfileFlow
-          onComplete={handlePsychologicalProfileComplete}
-          onClose={handlePsychologicalProfileSkip}
-        />
-      )}
-      {appState === "dailyIntent" && (
-        <DailyIntentCapture
-          userName={userInfo.name}
-          onComplete={handleDailyIntentComplete}
-        />
-      )}
-      {appState === "personalLeaderboard" && (
-        <PersonalLeaderboard
-          userName={userInfo.name}
-          intents={intents}
-          onGetStarted={handlePersonalLeaderboardStart}
-        />
-      )}
-      {appState === "progression" && (
-        <ProgressionSpiral
-          userName={userInfo.name}
-          progress={pillarProgress}
-          totalPoints={totalPoints}
-          onClose={handleCloseProgression}
-        />
-      )}
-      {appState === "rewards" && (
-        <RewardsAndBadges
-          userName={userInfo.name}
-          totalPoints={totalPoints}
-          currentStreak={currentStreak}
-          onClose={handleCloseRewards}
-        />
-      )}
-      {appState === "lifeSatisfaction" && (
-        <LifeSatisfactionScale userName={userInfo.name} onComplete={handleLifeSatisfactionComplete} />
-      )}
-      {appState === "zow" && (
-        <ZOWScreen userName={userInfo.name} userIntents={intents.map(i => i.intent)} onComplete={handleZERComplete} />
-      )}
-      {appState === "home" && (
-        <HomeScreen userName={userInfo.name} onStartChat={handleStartChat} />
-      )}
-      {appState === "chat" && (
-        <ConversationalChat
-          oracleName={oracleConfig.name}
-          userName={userInfo.name}
-          onClose={handleCloseChat}
-          completedActivity={completedActivity}
-        />
-      )}
-      {appState === "burnoutAssessment" && (
-        <BurnoutAssessment onComplete={handleBurnoutAssessmentComplete} />
-      )}
-      {appState === "burnoutResult" && (
-        <BurnoutResult
-          onContinue={handleBurnoutResultContinue}
-          onViewAnalytics={handleViewBurnoutAnalytics}
-          onBookCoach={handleBookCoach}
-        />
-      )}
-      {appState === "coachBooking" && (
-        <CoachBooking onComplete={handleCoachBookingComplete} />
-      )}
+      {appState === "userInfo" && <UserInfoCapture onComplete={handleUserInfoComplete} permissionGranted={micPermissionGranted} onPermissionGranted={setMicPermissionGranted} />}
+      {appState === "oracleSetup" && <OracleSetup userName={userInfo.name} onComplete={handleOracleSetupComplete} permissionGranted={micPermissionGranted} onPermissionGranted={setMicPermissionGranted} />}
+      {appState === "companySelection" && <CompanySelection userName={userInfo.name} onComplete={handleCompanySelectionComplete} />}
+      {appState === "psychologicalProfile" && <PsychologicalProfileFlow onComplete={handlePsychologicalProfileComplete} onClose={handlePsychologicalProfileSkip} />}
+      {appState === "dailyIntent" && <DailyIntentCapture userName={userInfo.name} onComplete={handleDailyIntentComplete} />}
+      {appState === "personalLeaderboard" && <PersonalLeaderboard userName={userInfo.name} intents={intents} onGetStarted={handlePersonalLeaderboardStart} />}
+      {appState === "progression" && <ProgressionSpiral userName={userInfo.name} progress={pillarProgress} totalPoints={totalPoints} onClose={handleCloseProgression} />}
+      {appState === "rewards" && <RewardsAndBadges userName={userInfo.name} totalPoints={totalPoints} currentStreak={currentStreak} onClose={handleCloseRewards} />}
+      {appState === "lifeSatisfaction" && <LifeSatisfactionScale userName={userInfo.name} onComplete={handleLifeSatisfactionComplete} />}
+      {appState === "zow" && <ZOWScreen userName={userInfo.name} userIntents={intents.map(i => i.intent)} onComplete={handleZERComplete} />}
+      {appState === "home" && <HomeScreen userName={userInfo.name} onStartChat={handleStartChat} />}
+      {appState === "chat" && <ConversationalChat oracleName={oracleConfig.name} userName={userInfo.name} onClose={handleCloseChat} completedActivity={completedActivity} />}
+      {appState === "burnoutAssessment" && <BurnoutAssessment onComplete={handleBurnoutAssessmentComplete} />}
+      {appState === "burnoutResult" && <BurnoutResult onContinue={handleBurnoutResultContinue} onViewAnalytics={handleViewBurnoutAnalytics} onBookCoach={handleBookCoach} />}
+      {appState === "coachBooking" && <CoachBooking onComplete={handleCoachBookingComplete} />}
       <AnimatedBackground />
     </>
   );

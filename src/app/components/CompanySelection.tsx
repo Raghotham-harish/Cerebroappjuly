@@ -14,6 +14,18 @@ interface CompanySelectionProps {
   onComplete: (companyName: string, companyEmail: string, companyId?: string) => void;
 }
 
+const GENERIC_PROVIDERS = [
+  "gmail.com","yahoo.com","yahoo.co.uk","yahoo.in","hotmail.com","outlook.com",
+  "outlook.in","live.com","icloud.com","me.com","mac.com","protonmail.com",
+  "proton.me","aol.com","zoho.com","yandex.com","yandex.ru","gmx.com",
+  "gmx.net","mail.com","rediffmail.com","inbox.com","fastmail.com",
+];
+
+function isOrgEmail(email: string): boolean {
+  const domain = email.split("@")[1]?.toLowerCase() ?? "";
+  return !!domain && !GENERIC_PROVIDERS.includes(domain);
+}
+
 const onboardedCompanies: Company[] = [
   { id: "1",  name: "Google",             industry: "Technology",    domain: "google.com" },
   { id: "2",  name: "Microsoft",          industry: "Technology",    domain: "microsoft.com" },
@@ -85,7 +97,11 @@ export function CompanySelection({ userName, onComplete }: CompanySelectionProps
       onComplete(selectedCompany.name, fullEmail, selectedCompany.id);
     } else if (isManualEntry && manualCompanyName.trim()) {
       if (!manualEmail.trim() || !manualEmail.includes("@")) {
-        setEmailError("Please enter a valid email address");
+        setEmailError("Please enter a valid work email address");
+        return;
+      }
+      if (!isOrgEmail(manualEmail.trim())) {
+        setEmailError("Please use your organisation email (not Gmail, Outlook, Yahoo, etc.)");
         return;
       }
       onComplete(manualCompanyName.trim(), manualEmail.trim());
@@ -282,9 +298,12 @@ export function CompanySelection({ userName, onComplete }: CompanySelectionProps
             {/* Manual company: full email */}
             {isManualEntry && manualCompanyName.trim() && (
               <div className="p-5 rounded-2xl mb-6" style={{ background: "white", border: `2px solid ${emailError ? "#EF4444" : "#E5E7EB"}` }}>
-                <label className="block text-sm mb-2" style={{ fontFamily: "Inter, sans-serif", color: "#6B7280", fontWeight: 600 }}>
-                  Work Email Address
+                <label className="block text-sm mb-1" style={{ fontFamily: "Inter, sans-serif", color: "#6B7280", fontWeight: 600 }}>
+                  Organisation Email Address
                 </label>
+                <p className="text-xs mb-2" style={{ fontFamily: "Inter, sans-serif", color: "#9CA3AF" }}>
+                  Use your company domain — not Gmail, Outlook, Yahoo, etc.
+                </p>
                 <input
                   type="email"
                   value={manualEmail}

@@ -257,7 +257,7 @@ function BellButton({ count = 0, onClick }: { count?: number; onClick?: () => vo
 }
 
 // ── Main component ─────────────────────────────────────────────────────────────
-export function ToolsScreen({ onNavigateToGames, onSelectTool, onOpenNotifications, notifUnreadCount = 0 }: ToolsScreenProps = {}) {
+export function ToolsScreen({ onNavigateToGames, onOpenAssessmentHub, onSelectTool, onOpenNotifications, notifUnreadCount = 0 }: ToolsScreenProps = {}) {
   const [activeTab, setActiveTab] = useState<"tools" | "history">("tools");
   const [activeCategory, setActiveCategory] = useState<ToolCategory>("all");
   const [expandedToolId, setExpandedToolId] = useState<string | null>(null);
@@ -449,7 +449,7 @@ export function ToolsScreen({ onNavigateToGames, onSelectTool, onOpenNotificatio
               >
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background: "rgba(255,255,255,0.6)" }}>
-                    <ClipboardCheck className="w-6 h-6" style={{ color: "#B45309", strokeWidth: 1.75 }} />
+                    <ClipboardCheck className="w-6 h-6" style={{ color: "#15113C", strokeWidth: 1.75 }} />
                   </div>
                   <div className="text-left">
                     <h3 className="text-base mb-0.5" style={{ fontFamily: "Inter, sans-serif", fontWeight: 600, color: "#15113C" }}>
@@ -460,7 +460,7 @@ export function ToolsScreen({ onNavigateToGames, onSelectTool, onOpenNotificatio
                     </p>
                   </div>
                 </div>
-                <ChevronRight className="w-5 h-5 flex-shrink-0" style={{ color: "#B45309", opacity: 0.6, strokeWidth: 1.75 }} />
+                <ChevronRight className="w-5 h-5 flex-shrink-0" style={{ color: "#15113C", opacity: 0.4, strokeWidth: 1.75 }} />
               </button>
             </div>
           )}

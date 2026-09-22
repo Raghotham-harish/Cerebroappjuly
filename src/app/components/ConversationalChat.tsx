@@ -59,6 +59,7 @@ import { CBIScreen } from "./tools/CBIScreen";
 import { ACEScreen } from "./tools/ACEScreen";
 import { SIBOQScreen } from "./tools/SIBOQScreen";
 import { RBSTScreen } from "./tools/RBSTScreen";
+import { AboutYourHealthScreen } from "./tools/AboutYourHealthScreen";
 
 interface ConversationalChatProps {
   oracleName: string;
@@ -220,6 +221,7 @@ export function ConversationalChat({ oracleName, userName, completedActivity }: 
   const [showBurnoutAnalytics, setShowBurnoutAnalytics] = useState(false);
   const [showGamesHub, setShowGamesHub] = useState(false);
   const [showAssessmentHub, setShowAssessmentHub] = useState(false);
+  const [showHealthScreens, setShowHealthScreens] = useState(false);
   const [activeGame, setActiveGame] = useState<string | null>(null);
   const [activeTool, setActiveTool] = useState<string | null>(null);
   const [cardFeedback, setCardFeedback] = useState<Record<number, 'up' | 'down'>>({});
@@ -1539,7 +1541,6 @@ export function ConversationalChat({ oracleName, userName, completedActivity }: 
 
     // Tool inner screens
     const closeTool = () => {
-      // Inject contextual follow-up for the completed tool into the chat tab
       const toolKey = activeTool === 'breath' ? 'breathing'
         : activeTool === 'gratitude' ? 'gratitude'
         : activeTool === 'zer' ? 'zer'
@@ -1549,7 +1550,22 @@ export function ConversationalChat({ oracleName, userName, completedActivity }: 
         setMessages(prev => [...prev, { type: 'contextual-actions', intro: cSet.intro, cards: cSet.cards } as MessageType]);
       }
       setActiveTool(null);
+      setShowHealthScreens(false);
     };
+
+    // Assessment completion → show AboutYourHealth screens first
+    const closeAssessment = () => setShowHealthScreens(true);
+
+    // Health screens active (shown after assessment result "Done" is tapped)
+    if (showHealthScreens) {
+      return (
+        <AboutYourHealthScreen
+          onComplete={(_answers) => closeTool()}
+          onSkip={closeTool}
+        />
+      );
+    }
+
     if (activeTool === "breath") return <BreathLoopsScreen onDone={closeTool} />;
     if (activeTool === "disidentification") return <DisidentificationScreen onDone={closeTool} />;
     if (activeTool === "imagery") return <GuidedImageryScreen onDone={closeTool} />;
@@ -1563,18 +1579,18 @@ export function ConversationalChat({ oracleName, userName, completedActivity }: 
     if (activeTool === "grounding") return <CrisisGroundingScreen onDone={closeTool} />;
     if (activeTool === "sleep") return <SleepRitualScreen onDone={closeTool} />;
     if (activeTool === "crisis") return <CrisisGroundingScreen onDone={closeTool} />;
-    if (activeTool === "gratitude-assess") return <GratitudeAssessmentScreen onDone={closeTool} onStartTool={(id) => setActiveTool(id)} onOpenChatWithPrompt={handleOpenChatWithPrompt} />;
-    if (activeTool === "anxiety-assess") return <AnxietyAssessmentScreen onDone={closeTool} onStartTool={(id) => setActiveTool(id)} onOpenChatWithPrompt={handleOpenChatWithPrompt} />;
-    if (activeTool === "trauma-assess") return <TraumaAssessmentScreen onDone={closeTool} onStartTool={(id) => setActiveTool(id)} onOpenChatWithPrompt={handleOpenChatWithPrompt} />;
-    if (activeTool === "burnout-bat") return <BurnoutBATScreen onDone={closeTool} onStartTool={(id) => setActiveTool(id)} onOpenChatWithPrompt={handleOpenChatWithPrompt} />;
-    if (activeTool === "gad7") return <GAD7Screen onDone={closeTool} onStartTool={(id) => setActiveTool(id)} onOpenChatWithPrompt={handleOpenChatWithPrompt} />;
-    if (activeTool === "dass") return <DASSScreen onDone={closeTool} onStartTool={(id) => setActiveTool(id)} onOpenChatWithPrompt={handleOpenChatWithPrompt} />;
-    if (activeTool === "grat") return <GRATScreen onDone={closeTool} onStartTool={(id) => setActiveTool(id)} onOpenChatWithPrompt={handleOpenChatWithPrompt} />;
-    if (activeTool === "olbi") return <OLBIScreen onDone={closeTool} onStartTool={(id) => setActiveTool(id)} onOpenChatWithPrompt={handleOpenChatWithPrompt} />;
-    if (activeTool === "cbi") return <CBIScreen onDone={closeTool} onStartTool={(id) => setActiveTool(id)} onOpenChatWithPrompt={handleOpenChatWithPrompt} />;
-    if (activeTool === "ace") return <ACEScreen onDone={closeTool} onStartTool={(id) => setActiveTool(id)} onOpenChatWithPrompt={handleOpenChatWithPrompt} />;
-    if (activeTool === "siboq") return <SIBOQScreen onDone={closeTool} onStartTool={(id) => setActiveTool(id)} onOpenChatWithPrompt={handleOpenChatWithPrompt} />;
-    if (activeTool === "rbst") return <RBSTScreen onDone={closeTool} onStartTool={(id) => setActiveTool(id)} onOpenChatWithPrompt={handleOpenChatWithPrompt} />;
+    if (activeTool === "gratitude-assess") return <GratitudeAssessmentScreen onDone={closeAssessment} onStartTool={(id) => setActiveTool(id)} onOpenChatWithPrompt={handleOpenChatWithPrompt} />;
+    if (activeTool === "anxiety-assess") return <AnxietyAssessmentScreen onDone={closeAssessment} onStartTool={(id) => setActiveTool(id)} onOpenChatWithPrompt={handleOpenChatWithPrompt} />;
+    if (activeTool === "trauma-assess") return <TraumaAssessmentScreen onDone={closeAssessment} onStartTool={(id) => setActiveTool(id)} onOpenChatWithPrompt={handleOpenChatWithPrompt} />;
+    if (activeTool === "burnout-bat") return <BurnoutBATScreen onDone={closeAssessment} onStartTool={(id) => setActiveTool(id)} onOpenChatWithPrompt={handleOpenChatWithPrompt} />;
+    if (activeTool === "gad7") return <GAD7Screen onDone={closeAssessment} onStartTool={(id) => setActiveTool(id)} onOpenChatWithPrompt={handleOpenChatWithPrompt} />;
+    if (activeTool === "dass") return <DASSScreen onDone={closeAssessment} onStartTool={(id) => setActiveTool(id)} onOpenChatWithPrompt={handleOpenChatWithPrompt} />;
+    if (activeTool === "grat") return <GRATScreen onDone={closeAssessment} onStartTool={(id) => setActiveTool(id)} onOpenChatWithPrompt={handleOpenChatWithPrompt} />;
+    if (activeTool === "olbi") return <OLBIScreen onDone={closeAssessment} onStartTool={(id) => setActiveTool(id)} onOpenChatWithPrompt={handleOpenChatWithPrompt} />;
+    if (activeTool === "cbi") return <CBIScreen onDone={closeAssessment} onStartTool={(id) => setActiveTool(id)} onOpenChatWithPrompt={handleOpenChatWithPrompt} />;
+    if (activeTool === "ace") return <ACEScreen onDone={closeAssessment} onStartTool={(id) => setActiveTool(id)} onOpenChatWithPrompt={handleOpenChatWithPrompt} />;
+    if (activeTool === "siboq") return <SIBOQScreen onDone={closeAssessment} onStartTool={(id) => setActiveTool(id)} onOpenChatWithPrompt={handleOpenChatWithPrompt} />;
+    if (activeTool === "rbst") return <RBSTScreen onDone={closeAssessment} onStartTool={(id) => setActiveTool(id)} onOpenChatWithPrompt={handleOpenChatWithPrompt} />;
 
     return (
       <>

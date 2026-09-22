@@ -367,7 +367,7 @@ export function ZERScreen({ onDone }: ZERScreenProps) {
             className="relative rounded-3xl cursor-pointer overflow-hidden"
             style={{
               height: "280px",
-              background: "linear-gradient(to top, #FED7AA 0%, #FEF3C7 20%, #D1FAE5 40%, #D1FAE5 65%, #FEF3C7 82%, #FED7AA 100%)",
+              background: "white",
               border: "2px solid #E5E7EB",
             }}
           >
