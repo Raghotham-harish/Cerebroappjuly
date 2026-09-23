@@ -19,6 +19,18 @@ const promptSets = [
   ["What made you smile today, even briefly?", "Who showed up for you recently — how?", "What simple comfort are you grateful for right now?"],
   ["What strength within you are you thankful for?", "What in nature brought you peace this week?", "What ordinary moment turned out to be beautiful?"],
   ["What challenge taught you something valuable?", "Who in your life do you appreciate most today?", "What opportunity are you grateful to have?"],
+  // Three Good Things — what went well + why
+  ["What went well today — even one small thing?", "Why did that good thing happen?", "What role did you play in making it possible?"],
+  // Unsung Hero — relational acknowledgment
+  ["Who performed a quiet act of kindness for you recently?", "What did they do, and why was it thoughtful?", "Is there a small way you could acknowledge them?"],
+  // Sensory Appreciation — one-sense focus
+  ["What pleasant sensation have you noticed today — a sound, scent, or feeling?", "What everyday object makes your life easier that you often overlook?", "What in your immediate surroundings right now brings quiet comfort?"],
+  // Silver Lining — reframing a setback
+  ["What was one frustration or setback this week?", "What unexpected lesson or silver lining came out of it?", "How has a past difficulty shaped you into who you are today?"],
+  // Laughter Recall — relational lightness
+  ["Who made you genuinely laugh or smile recently?", "What was a moment of lightness or playfulness this week?", "What relationship in your life are you most grateful for right now?"],
+  // Mental Subtraction — appreciating what exists
+  ["Name one good thing in your life you might take for granted.", "What would life look like without it?", "Returning to the present — what do you see more clearly now?"],
 ];
 
 const PURPLE = "#8B5CF6";

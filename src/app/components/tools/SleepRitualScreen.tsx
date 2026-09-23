@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import {
   ArrowLeft, Check, Moon, Smartphone, Lightbulb, Thermometer,
-  Coffee, NotebookPen, Volume2, VolumeX, Lock, Waves,
+  Coffee, NotebookPen, Volume2, VolumeX, Waves, Plus, X,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -107,6 +107,40 @@ const ritualSteps = [
     description: "Guided progressive muscle relaxation. Tense and release each muscle group.",
     iconBg: "#1E1B4B", iconColor: "#A5B4FC",
     isJPMR: true,
+  },
+];
+
+/* ─── Extra habits from Sleep Checklist xlsx ─────────────────────────── */
+const extraHabitGroups = [
+  {
+    when: "Morning",
+    habits: [
+      { id: "m1", label: "Woke at the same time", desc: "Within 30 min of your usual time, even on weekends." },
+      { id: "m2", label: "Got 10–30 min of daylight", desc: "Even a cloudy morning resets your body clock." },
+    ],
+  },
+  {
+    when: "During the day",
+    habits: [
+      { id: "d1", label: "Last caffeine by mid-afternoon", desc: "Caffeine lingers 6–8 hrs. Skipped it after 3 pm." },
+      { id: "d2", label: "Moved my body today", desc: "Any movement. Harder exercise done earlier in the day." },
+      { id: "d3", label: "Kept nap under 30 min (before 3 pm)", desc: "Longer or later naps eat into night-time sleep." },
+    ],
+  },
+  {
+    when: "Evening",
+    habits: [
+      { id: "e1", label: "Finished dinner 2–3 hrs before bed", desc: "A heavy meal close to bed lightens sleep quality." },
+      { id: "e2", label: "Went easy on alcohol tonight", desc: "It breaks up sleep in the second half of the night." },
+      { id: "e3", label: "Parked tomorrow's worries on paper", desc: "A quick to-do list so your mind doesn't hold it." },
+    ],
+  },
+  {
+    when: "Last hour",
+    habits: [
+      { id: "l1", label: "Started a wind-down routine", desc: "Something calming that signals sleep is coming." },
+      { id: "l2", label: "Noted one good thing from today", desc: "One small line about something you're glad happened." },
+    ],
   },
 ];
 
@@ -425,16 +459,16 @@ export function SleepRitualScreen({ onDone }: SleepRitualScreenProps) {
   const [view, setView] = useState<View>("checklist");
   const [checked, setChecked] = useState<boolean[]>(ritualSteps.map(() => false));
   const [soundOn, setSoundOn] = useState(true);
+  const [showExtraHabits, setShowExtraHabits] = useState(false);
+  const [extraChecked, setExtraChecked] = useState<Set<string>>(new Set());
 
   useSleepAmbient(soundOn && view === "checklist");
 
   const checkedCount = checked.filter(Boolean).length;
-  const allChecked = checkedCount === ritualSteps.length;
-
-  const isStepEnabled = (i: number) => i === 0 || checked[i - 1];
+  const totalChecked = checkedCount + extraChecked.size;
+  const canProceed = totalChecked >= 4;
 
   const handleStepTap = (i: number) => {
-    if (!isStepEnabled(i)) return;
     const step = ritualSteps[i] as typeof ritualSteps[0] & { isJPMR?: boolean };
     if (step.isJPMR && !checked[i]) {
       setChecked(prev => prev.map((v, idx) => idx === i ? true : v));
@@ -442,6 +476,14 @@ export function SleepRitualScreen({ onDone }: SleepRitualScreenProps) {
     } else {
       setChecked(prev => prev.map((v, idx) => idx === i ? !v : v));
     }
+  };
+
+  const toggleExtra = (id: string) => {
+    setExtraChecked(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
   };
 
   if (view === "jpmr") return <JPMRSession onDone={() => setView("breathing")} />;
@@ -483,7 +525,7 @@ export function SleepRitualScreen({ onDone }: SleepRitualScreenProps) {
         <div className="flex-1">
           <h1 className="text-xl" style={{ fontFamily: "Lora, serif", fontWeight: 500, color: "#15113C" }}>Sleep Ritual</h1>
           <p className="text-xs" style={{ fontFamily: "Inter, sans-serif", color: "#9CA3AF" }}>
-            {checkedCount}/{ritualSteps.length} steps complete
+            {totalChecked} {totalChecked === 1 ? "step" : "steps"} done · need 4 to proceed
           </p>
         </div>
         <button
@@ -501,17 +543,17 @@ export function SleepRitualScreen({ onDone }: SleepRitualScreenProps) {
         </button>
       </div>
 
-      {/* Progress bar */}
+      {/* Progress bar — shows progress toward the 4-step minimum */}
       <div className="h-1.5 rounded-full mb-1" style={{ background: "#E5E7EB" }}>
         <motion.div
           className="h-full rounded-full"
-          animate={{ width: `${(checkedCount / ritualSteps.length) * 100}%` }}
+          animate={{ width: `${Math.min((totalChecked / 4) * 100, 100)}%` }}
           transition={{ duration: 0.5, ease: "easeOut" }}
-          style={{ background: "linear-gradient(90deg, #8B5CF6, #A78BFA)" }}
+          style={{ background: canProceed ? "linear-gradient(90deg, #7C3AED, #8B5CF6)" : "linear-gradient(90deg, #8B5CF6, #A78BFA)" }}
         />
       </div>
-      <p className="text-right text-xs mb-4" style={{ fontFamily: "Inter, sans-serif", color: "#C4B5FD" }}>
-        {Math.round((checkedCount / ritualSteps.length) * 100)}%
+      <p className="text-right text-xs mb-4" style={{ fontFamily: "Inter, sans-serif", color: canProceed ? "#7C3AED" : "#C4B5FD" }}>
+        {canProceed ? "Ready ✓" : `${totalChecked}/4`}
       </p>
 
       {/* Ambient badge */}
@@ -535,7 +577,6 @@ export function SleepRitualScreen({ onDone }: SleepRitualScreenProps) {
       <div className="space-y-3 flex-1">
         {ritualSteps.map((step, i) => {
           const stepWithJPMR = step as typeof step & { isJPMR?: boolean };
-          const locked = !isStepEnabled(i);
           const isDone = checked[i];
           const isJPMR = !!stepWithJPMR.isJPMR;
 
@@ -543,52 +584,46 @@ export function SleepRitualScreen({ onDone }: SleepRitualScreenProps) {
             <motion.button
               key={i}
               onClick={() => handleStepTap(i)}
-              disabled={locked}
               initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: locked ? 0.42 : 1, y: 0 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.055, duration: 0.3 }}
               className="w-full p-4 rounded-2xl flex items-center gap-4 text-left"
               style={{
                 background: isDone ? "rgba(139,92,246,0.09)" : "rgba(255,255,255,0.82)",
-                border: isDone ? "1.5px solid rgba(139,92,246,0.3)" : locked ? "1.5px dashed rgba(0,0,0,0.1)" : "1.5px solid rgba(0,0,0,0.06)",
-                cursor: locked ? "default" : "pointer",
-                boxShadow: isDone || locked ? "none" : "0 1px 6px rgba(0,0,0,0.04)",
+                border: isDone ? "1.5px solid rgba(139,92,246,0.3)" : "1.5px solid rgba(0,0,0,0.06)",
+                cursor: "pointer",
+                boxShadow: isDone ? "none" : "0 1px 6px rgba(0,0,0,0.04)",
               }}
             >
               <div
                 className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300"
-                style={{ background: isDone ? "#8B5CF6" : locked ? "#F3F4F6" : step.iconBg }}
+                style={{ background: isDone ? "#8B5CF6" : step.iconBg }}
               >
-                {isDone ? (
-                  <Check className="w-5 h-5" style={{ color: "white", strokeWidth: 2 }} />
-                ) : locked ? (
-                  <Lock className="w-4 h-4" style={{ color: "#D1D5DB", strokeWidth: 1.75 }} />
-                ) : (
-                  <step.Icon className="w-4 h-4" style={{ color: step.iconColor, strokeWidth: 1.75 }} />
-                )}
+                {isDone
+                  ? <Check className="w-5 h-5" style={{ color: "white", strokeWidth: 2 }} />
+                  : <step.Icon className="w-4 h-4" style={{ color: step.iconColor, strokeWidth: 1.75 }} />
+                }
               </div>
 
               <div className="flex-1 min-w-0">
                 <p className="text-sm mb-0.5 flex items-center gap-2" style={{
                   fontFamily: "Inter, sans-serif", fontWeight: 600,
-                  color: isDone ? "#8B5CF6" : locked ? "#C4C4D0" : "#15113C",
+                  color: isDone ? "#8B5CF6" : "#15113C",
                   textDecoration: isDone && !isJPMR ? "line-through" : "none",
                 }}>
                   {step.title}
-                  {isJPMR && !isDone && !locked && (
+                  {isJPMR && !isDone && (
                     <span className="text-xs font-normal px-2 py-0.5 rounded-full" style={{ background: "rgba(139,92,246,0.12)", color: "#7C3AED" }}>
                       Guided
                     </span>
                   )}
                 </p>
-                <p className="text-xs" style={{ fontFamily: "Inter, sans-serif", color: locked ? "#D1D5DB" : "#9CA3AF", lineHeight: 1.4 }}>
-                  {locked
-                    ? i === 0 ? "Start here" : `Complete step ${i} first`
-                    : step.description}
+                <p className="text-xs" style={{ fontFamily: "Inter, sans-serif", color: "#9CA3AF", lineHeight: 1.4 }}>
+                  {step.description}
                 </p>
               </div>
 
-              {!locked && !isDone && isJPMR && (
+              {!isDone && isJPMR && (
                 <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "rgba(139,92,246,0.12)" }}>
                   <span style={{ color: "#8B5CF6", fontSize: 14, lineHeight: 1 }}>→</span>
                 </div>
@@ -598,21 +633,131 @@ export function SleepRitualScreen({ onDone }: SleepRitualScreenProps) {
         })}
       </div>
 
+      {/* Add more habits button */}
+      <button
+        onClick={() => setShowExtraHabits(true)}
+        className="mt-4 w-full py-3 rounded-2xl flex items-center justify-center gap-2 text-sm"
+        style={{
+          fontFamily: "Inter, sans-serif", fontWeight: 500,
+          background: extraChecked.size > 0 ? "rgba(139,92,246,0.08)" : "rgba(255,255,255,0.7)",
+          border: extraChecked.size > 0 ? "1.5px solid rgba(139,92,246,0.25)" : "1.5px dashed rgba(0,0,0,0.12)",
+          color: extraChecked.size > 0 ? "#7C3AED" : "#6B7280",
+          cursor: "pointer",
+        }}
+      >
+        <Plus className="w-4 h-4" />
+        {extraChecked.size > 0
+          ? `${extraChecked.size} extra habit${extraChecked.size !== 1 ? "s" : ""} added`
+          : "Add habits I did today"}
+      </button>
+
       {/* CTA */}
       <button
         onClick={() => setView("jpmr")}
-        disabled={!allChecked}
-        className="mt-6 w-full py-4 rounded-2xl text-sm font-medium transition-all"
-        style={allChecked
-          ? { background: "linear-gradient(135deg, #7C3AED, #8B5CF6)", color: "white", fontFamily: "Inter, sans-serif", boxShadow: "0 4px 20px rgba(139,92,246,0.35)" }
+        disabled={!canProceed}
+        className="mt-3 w-full py-4 rounded-2xl text-sm font-medium transition-all"
+        style={canProceed
+          ? { background: "linear-gradient(135deg, #7C3AED, #8B5CF6)", color: "white", fontFamily: "Inter, sans-serif", boxShadow: "0 4px 20px rgba(139,92,246,0.35)", cursor: "pointer" }
           : { background: "#F3F4F6", color: "#C4C4D0", fontFamily: "Inter, sans-serif", cursor: "not-allowed" }
         }
       >
-        {allChecked
+        {canProceed
           ? "Begin JPMR relaxation →"
-          : `${ritualSteps.length - checkedCount} more step${ritualSteps.length - checkedCount !== 1 ? "s" : ""} remaining`
+          : `${4 - totalChecked} more step${4 - totalChecked !== 1 ? "s" : ""} to go`
         }
       </button>
+
+      {/* Extra Habits Popup */}
+      <AnimatePresence>
+        {showExtraHabits && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              onClick={() => setShowExtraHabits(false)}
+              style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", zIndex: 50 }}
+            />
+            <motion.div
+              initial={{ y: "100%", opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: "100%", opacity: 0 }}
+              transition={{ type: "spring", damping: 28, stiffness: 300 }}
+              style={{
+                position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 51,
+                background: "white", borderRadius: "24px 24px 0 0",
+                padding: "20px 16px 40px", maxHeight: "80vh", overflowY: "auto",
+              }}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="text-base font-semibold" style={{ fontFamily: "Lora, serif", color: "#15113C" }}>
+                    Habits I did today
+                  </h3>
+                  <p className="text-xs mt-0.5" style={{ fontFamily: "Inter, sans-serif", color: "#9CA3AF" }}>
+                    Tap any you completed — they count toward your 4.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowExtraHabits(false)}
+                  className="w-8 h-8 rounded-full flex items-center justify-center"
+                  style={{ background: "#F3F4F6" }}
+                >
+                  <X className="w-4 h-4" style={{ color: "#6B7280" }} />
+                </button>
+              </div>
+
+              <div className="space-y-5">
+                {extraHabitGroups.map(group => (
+                  <div key={group.when}>
+                    <p className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ fontFamily: "Inter, sans-serif", color: "#9CA3AF", letterSpacing: "0.1em" }}>
+                      {group.when}
+                    </p>
+                    <div className="space-y-2">
+                      {group.habits.map(habit => {
+                        const selected = extraChecked.has(habit.id);
+                        return (
+                          <button
+                            key={habit.id}
+                            onClick={() => toggleExtra(habit.id)}
+                            className="w-full p-3 rounded-2xl flex items-center gap-3 text-left"
+                            style={{
+                              background: selected ? "rgba(139,92,246,0.08)" : "#F9FAFB",
+                              border: selected ? "1.5px solid rgba(139,92,246,0.3)" : "1.5px solid #F3F4F6",
+                              cursor: "pointer",
+                            }}
+                          >
+                            <div
+                              className="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center"
+                              style={{ background: selected ? "#8B5CF6" : "#E5E7EB" }}
+                            >
+                              {selected && <Check className="w-3 h-3" style={{ color: "white", strokeWidth: 2.5 }} />}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium" style={{ fontFamily: "Inter, sans-serif", color: selected ? "#7C3AED" : "#15113C" }}>
+                                {habit.label}
+                              </p>
+                              <p className="text-xs" style={{ fontFamily: "Inter, sans-serif", color: "#9CA3AF", lineHeight: 1.4 }}>
+                                {habit.desc}
+                              </p>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <button
+                onClick={() => setShowExtraHabits(false)}
+                className="mt-6 w-full py-3.5 rounded-2xl text-sm font-semibold"
+                style={{ background: "linear-gradient(135deg, #7C3AED, #8B5CF6)", color: "white", fontFamily: "Inter, sans-serif", cursor: "pointer" }}
+              >
+                Done — {extraChecked.size > 0 ? `${extraChecked.size} added` : "no extras"}
+              </button>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

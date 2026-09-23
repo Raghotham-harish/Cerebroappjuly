@@ -61,9 +61,9 @@ function useAmbientAudio(landscapeId: string | null, enabled: boolean) {
         return osc;
       };
 
-      const osc1 = makeOsc(f1, 1.0);
-      const osc2 = makeOsc(f2, 0.22);
-      const osc3 = makeOsc(f3, 0.14);
+      const osc1 = makeOsc(f1, 0.5);
+      const osc2 = makeOsc(f2, 0.18);
+      const osc3 = makeOsc(f3, 0.12);
 
       // Very slow LFO for organic movement
       const lfo = ctx.createOscillator();
@@ -76,11 +76,9 @@ function useAmbientAudio(landscapeId: string | null, enabled: boolean) {
 
       const stop = () => {
         try {
-          master.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.8);
-          setTimeout(() => {
-            [osc1, osc2, osc3, lfo].forEach(o => { try { o.stop(); } catch {} });
-            ctx.close();
-          }, 900);
+          master.gain.setValueAtTime(0, ctx.currentTime);
+          [osc1, osc2, osc3, lfo].forEach(o => { try { o.stop(); } catch {} });
+          setTimeout(() => ctx.close().catch(() => {}), 80);
         } catch {}
       };
 
@@ -318,8 +316,11 @@ export function GuidedImageryScreen({ onDone }: GuidedImageryScreenProps) {
   const [landscape, setLandscape] = useState<string | null>(null);
   const [stepIdx, setStepIdx] = useState(0);
   const [completed, setCompleted] = useState(false);
-  const [voiceOn, setVoiceOn] = useState(false);
-  const [soundOn, setSoundOn] = useState(true); // ambient music
+  const [voiceOn, setVoiceOn] = useState(true);
+  const [soundOn, setSoundOn] = useState(true);
+
+  // Cancel any speech left over from other screens
+  useEffect(() => { window.speechSynthesis?.cancel(); }, []);
 
   // Ambient audio
   useAmbientAudio(landscape, soundOn);
@@ -472,7 +473,8 @@ export function GuidedImageryScreen({ onDone }: GuidedImageryScreenProps) {
               {/* Voice narration toggle */}
               <button onClick={toggleVoice} style={{
                 width: 40, height: 40, borderRadius: "50%",
-                background: "rgba(0,0,0,0.38)", border: "none",
+                background: voiceOn ? "rgba(139,92,246,0.55)" : "rgba(0,0,0,0.38)",
+                border: voiceOn ? "1px solid rgba(196,181,253,0.5)" : "none",
                 display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
               }}>
                 {voiceOn

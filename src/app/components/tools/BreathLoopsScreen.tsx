@@ -7,7 +7,7 @@ function speakText(text: string) {
   if (!("speechSynthesis" in window)) return;
   window.speechSynthesis.cancel();
   const utt = new SpeechSynthesisUtterance(text);
-  utt.rate = 0.82; utt.pitch = 1.0; utt.volume = 1;
+  utt.rate = 0.62; utt.pitch = 1.0; utt.volume = 1;
   // Prefer a calm female voice
   const voices = window.speechSynthesis.getVoices();
   const preferred = voices.find(v =>
