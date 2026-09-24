@@ -174,7 +174,7 @@ export function OracleChat({ oracleName, oracleAvatar, userName = "You" }: Oracl
           <div className="text-center">
             <VoiceOrb isListening={true} isSpeaking={false} size={280} />
             <p className="mt-6 text-gray-700 text-lg" style={{ fontFamily: 'Lora, serif' }}>Listening...</p>
-            <p className="mt-2 text-sm text-gray-600" style={{ fontFamily: 'Inter, sans-serif' }}>💡 Demo Mode: Simulating voice input</p>
+            <p className="mt-2 text-sm text-gray-600" style={{ fontFamily: 'Inter, sans-serif' }}>Demo Mode: Simulating voice input</p>
           </div>
         </div>
       )}

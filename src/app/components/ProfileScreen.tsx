@@ -216,7 +216,7 @@ export function ProfileScreen({ userName, oracleName, onOpenNotifications }: Pro
           color: '#D1D5DB'
         }}
       >
-        CereBro v1.0.0 · Built with ♥︎
+        CereBro v1.0.0
       </p>
     </div>
   );

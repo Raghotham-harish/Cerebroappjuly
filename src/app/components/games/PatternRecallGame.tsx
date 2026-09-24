@@ -174,10 +174,10 @@ export function PatternRecallGame({ onClose, onComplete }: PatternRecallGameProp
             </div>
 
             <p className="text-center text-sm px-4" style={{ fontFamily: 'Inter, sans-serif', color: '#8B5CF6', fontWeight: 500 }}>
-              {accuracy === 100 ? "Perfect working memory! Outstanding! 🧠✨" :
-               accuracy >= 80 ? "Excellent memory recall! Keep it sharp 💜" :
-               accuracy >= 60 ? "Good memory work! Practice makes perfect 📚" :
-               "Keep training! Your memory will strengthen 🌟"}
+              {accuracy === 100 ? "Perfect working memory! Outstanding!" :
+               accuracy >= 80 ? "Excellent memory recall! Keep it sharp." :
+               accuracy >= 60 ? "Good memory work! Practice makes perfect." :
+               "Keep training! Your memory will strengthen."}
             </p>
           </div>
 

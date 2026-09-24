@@ -148,7 +148,7 @@ export function BreathingRhythmGame({ onClose, onComplete }: BreathingRhythmGame
               Your breath is now more calm and centered. You've activated your parasympathetic nervous system, reducing stress and anxiety.
             </p>
             <p className="text-sm" style={{ fontFamily: 'Inter, sans-serif', color: '#10B981', fontWeight: 600 }}>
-              Well done! 🧘‍♀️
+              Well done!
             </p>
           </div>
 
@@ -232,7 +232,7 @@ export function BreathingRhythmGame({ onClose, onComplete }: BreathingRhythmGame
         {/* Tip */}
         <div className="mt-8 p-4 rounded-2xl max-w-sm" style={{ background: 'rgba(255,255,255,0.6)' }}>
           <p className="text-xs text-center" style={{ fontFamily: 'Inter, sans-serif', color: '#6B7280', lineHeight: 1.5 }}>
-            💡 <strong>Tip:</strong> For deeper practice, try alternate nostril breathing (Nadi Shodhana) - close right nostril, inhale left; close left, exhale right; repeat.
+            <strong>Tip:</strong> For deeper practice, try alternate nostril breathing (Nadi Shodhana) - close right nostril, inhale left; close left, exhale right; repeat.
           </p>
         </div>
       </div>

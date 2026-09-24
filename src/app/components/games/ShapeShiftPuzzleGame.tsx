@@ -181,10 +181,10 @@ export function ShapeShiftPuzzleGame({ onClose, onComplete }: ShapeShiftPuzzleGa
             </div>
 
             <p className="text-center text-sm px-4" style={{ fontFamily: 'Inter, sans-serif', color: '#F59E0B', fontWeight: 500 }}>
-              {efficiency >= 80 ? "Excellent spatial thinking! 🧩✨" :
-               efficiency >= 60 ? "Great problem-solving! 🎯" :
-               efficiency >= 40 ? "You're developing flexibility! 📐" :
-               "Keep practicing — spatial skills grow! 🌟"}
+              {efficiency >= 80 ? "Excellent spatial thinking!" :
+               efficiency >= 60 ? "Great problem-solving!" :
+               efficiency >= 40 ? "You're developing flexibility!" :
+               "Keep practicing — spatial skills grow!"}
             </p>
           </div>
 

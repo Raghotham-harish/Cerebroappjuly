@@ -152,10 +152,10 @@ export function ObjectTrayGame({ onClose, onComplete }: ObjectTrayGameProps) {
             </div>
 
             <p className="text-center text-sm px-4" style={{ fontFamily: 'Inter, sans-serif', color: '#8B5CF6', fontWeight: 500 }}>
-              {accuracy === 100 ? "Perfect visual memory! Outstanding! 👁️✨" :
-               accuracy >= 80 ? "Excellent observation skills! 🔍" :
-               accuracy >= 60 ? "Good memory! Keep practicing 📸" :
-               "Your visual memory will improve! 🌟"}
+              {accuracy === 100 ? "Perfect visual memory! Outstanding!" :
+               accuracy >= 80 ? "Excellent observation skills!" :
+               accuracy >= 60 ? "Good memory! Keep practicing." :
+               "Your visual memory will improve."}
             </p>
           </div>
 

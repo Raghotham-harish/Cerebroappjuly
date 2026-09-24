@@ -221,10 +221,10 @@ export function PathMemoryGame({ onClose, onComplete }: PathMemoryGameProps) {
             </div>
 
             <p className="text-center text-sm px-4" style={{ fontFamily: 'Inter, sans-serif', color: '#8B5CF6', fontWeight: 500 }}>
-              {accuracy === 100 ? "Perfect spatial recall! Amazing navigation! 🗺️✨" :
-               accuracy >= 80 ? "Excellent path memory! 🧭" :
-               accuracy >= 60 ? "Good spatial awareness! Keep practicing 📍" :
-               "Your spatial memory will improve! 🌟"}
+              {accuracy === 100 ? "Perfect spatial recall! Amazing navigation!" :
+               accuracy >= 80 ? "Excellent path memory!" :
+               accuracy >= 60 ? "Good spatial awareness! Keep practicing." :
+               "Your spatial memory will improve."}
             </p>
           </div>
 

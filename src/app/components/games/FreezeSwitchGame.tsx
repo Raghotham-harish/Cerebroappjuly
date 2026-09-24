@@ -176,9 +176,9 @@ export function FreezeSwitchGame({ onClose, onComplete }: FreezeSwitchGameProps)
             </div>
 
             <p className="text-center text-sm px-4" style={{ fontFamily: 'Inter, sans-serif', color: '#F59E0B', fontWeight: 500 }}>
-              {accuracy >= 80 ? "Excellent reaction control! You're a master switcher! ⚡" :
-               accuracy >= 60 ? "Great attention shifting! Keep practicing 🎯" :
-               "Good effort! Your reaction speed will improve 🌟"}
+              {accuracy >= 80 ? "Excellent reaction control! You're a master switcher!" :
+               accuracy >= 60 ? "Great attention shifting! Keep practicing." :
+               "Good effort! Your reaction speed will improve."}
             </p>
           </div>
 

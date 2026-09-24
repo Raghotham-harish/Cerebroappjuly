@@ -213,7 +213,7 @@ export function ZenSandGame({ onClose, onComplete }: ZenSandGameProps) {
       <div className="p-4">
         <div className="p-3 rounded-2xl text-center" style={{ background: 'rgba(255,255,255,0.6)' }}>
           <p className="text-xs" style={{ fontFamily: 'Inter, sans-serif', color: '#9D174D' }}>
-            Focus on the movement. Let thoughts pass like sand. 🌸
+            Focus on the movement. Let thoughts pass like sand.
           </p>
         </div>
       </div>

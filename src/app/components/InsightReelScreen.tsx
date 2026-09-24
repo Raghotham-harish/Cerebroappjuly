@@ -174,7 +174,7 @@ export function InsightReelScreen({
                     fontWeight: 600
                   }}
                 >
-                  ✨ {highlight}
+                  {highlight}
                 </div>
               )}
             </>

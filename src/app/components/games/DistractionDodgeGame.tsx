@@ -174,10 +174,10 @@ export function DistractionDodgeGame({ onClose, onComplete }: DistractionDodgeGa
             </div>
 
             <p className="text-center text-sm px-4" style={{ fontFamily: 'Inter, sans-serif', color: '#F59E0B', fontWeight: 500 }}>
-              {distractionsClicked === 0 && accuracy >= 90 ? "Perfect focus! You ignored all distractions! 🎯" :
-               distractionsClicked <= 2 ? "Excellent sustained attention! Keep it up 💪" :
-               distractionsClicked <= 5 ? "Good focus! With practice you'll improve 📈" :
-               "Keep practicing! Your attention will strengthen 🌱"}
+              {distractionsClicked === 0 && accuracy >= 90 ? "Perfect focus! You ignored all distractions!" :
+               distractionsClicked <= 2 ? "Excellent sustained attention! Keep it up." :
+               distractionsClicked <= 5 ? "Good focus! With practice you'll improve." :
+               "Keep practicing! Your attention will strengthen."}
             </p>
           </div>
 

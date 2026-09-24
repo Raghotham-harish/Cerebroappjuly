@@ -1,4 +1,5 @@
 import { useState, Component, type ReactNode } from "react";
+import { Wrench } from "lucide-react";
 import { LoginScreen } from "./components/LoginScreen";
 import { UserInfoCapture } from "./components/UserInfoCapture";
 import { OracleSetup, OracleConfig } from "./components/OracleSetup";
@@ -108,7 +109,7 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { error: Error | 
       return (
         <div className="min-h-screen flex flex-col items-center justify-center px-6" style={{ background: "#F5F3FF" }}>
           <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4" style={{ background: "#EDE9FE" }}>
-            <span className="text-2xl">🔧</span>
+            <Wrench style={{ width: 28, height: 28, color: "#8B5CF6", strokeWidth: 1.5 }} />
           </div>
           <h2 className="text-lg mb-2" style={{ fontFamily: "Lora, serif", color: "#15113C" }}>Something went wrong</h2>
           <p className="text-sm text-center mb-6" style={{ fontFamily: "Inter, sans-serif", color: "#6B7280", maxWidth: 280 }}>

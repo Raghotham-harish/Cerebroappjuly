@@ -165,8 +165,8 @@ export function EmotionCompassGame({ onClose, onComplete }: EmotionCompassGamePr
             <p className="text-center text-sm px-4" style={{ fontFamily: 'Inter, sans-serif', color: '#10B981', fontWeight: 500 }}>
               {accuracy === 100 ? "Perfect emotional navigation! 🧭✨" :
                accuracy >= 75 ? "Great emotional awareness! 💚" :
-               accuracy >= 50 ? "You're building emotional intelligence! 🌱" :
-               "Every emotion you name strengthens your compass! 🌟"}
+               accuracy >= 50 ? "You're building emotional intelligence!" :
+               "Every emotion you name strengthens your compass!"}
             </p>
           </div>
 

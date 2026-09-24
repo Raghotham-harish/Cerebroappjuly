@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect, useMemo } from "react";
-import { ArrowLeft, Check, Mic, MicOff, Volume2, VolumeX } from "lucide-react";
+import { useState, useRef, useEffect, useMemo, type ComponentType } from "react";
+import { ArrowLeft, Check, Mic, MicOff, Volume2, VolumeX, TreePine, Waves, Mountain, Flower2 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
 /* ─── TTS ───────────────────────────────────────────────────────────── */
@@ -249,32 +249,32 @@ interface GuidedImageryScreenProps {
   onDone: () => void;
 }
 
-const landscapes = [
+const landscapes: { id: string; name: string; Icon: ComponentType<{ style?: React.CSSProperties }>; photo: string; thumb: string }[] = [
   {
     id: "forest",
     name: "Forest Sanctuary",
-    emoji: "🌲",
+    Icon: TreePine,
     photo: "https://images.unsplash.com/photo-1544039161-b0c20826c6f6?w=800&h=1200&fit=crop&auto=format",
     thumb: "https://images.unsplash.com/photo-1544039161-b0c20826c6f6?w=400&h=240&fit=crop&auto=format",
   },
   {
     id: "ocean",
     name: "Ocean Shore",
-    emoji: "🌊",
+    Icon: Waves,
     photo: "https://images.unsplash.com/photo-1618413002870-00a51e1c2bb6?w=800&h=1200&fit=crop&auto=format",
     thumb: "https://images.unsplash.com/photo-1618413002870-00a51e1c2bb6?w=400&h=240&fit=crop&auto=format",
   },
   {
     id: "mountain",
     name: "Mountain Peak",
-    emoji: "⛰️",
+    Icon: Mountain,
     photo: "https://images.unsplash.com/photo-1589887305888-6254d60b5308?w=800&h=1200&fit=crop&auto=format",
     thumb: "https://images.unsplash.com/photo-1589887305888-6254d60b5308?w=400&h=240&fit=crop&auto=format",
   },
   {
     id: "meadow",
     name: "Sunlit Meadow",
-    emoji: "🌸",
+    Icon: Flower2,
     photo: "https://images.unsplash.com/photo-1782332576168-159393638224?w=800&h=1200&fit=crop&auto=format",
     thumb: "https://images.unsplash.com/photo-1782332576168-159393638224?w=400&h=240&fit=crop&auto=format",
   },
@@ -450,8 +450,9 @@ export function GuidedImageryScreen({ onDone }: GuidedImageryScreenProps) {
             </button>
 
             <div style={{ flex: 1, marginLeft: 12, marginRight: 8 }}>
-              <div style={{ fontFamily: "Lora, serif", fontWeight: 500, fontSize: "1.12rem", color: "white", lineHeight: 1.2 }}>
-                {land.emoji} {land.name}
+              <div style={{ display: "flex", alignItems: "center", gap: 8, fontFamily: "Lora, serif", fontWeight: 500, fontSize: "1.12rem", color: "white", lineHeight: 1.2 }}>
+                <land.Icon style={{ width: 18, height: 18, color: "rgba(255,255,255,0.85)", strokeWidth: 1.75 }} />
+                {land.name}
               </div>
               <div style={{ fontFamily: "Inter, sans-serif", fontSize: "0.73rem", color: "rgba(255,255,255,0.7)", marginTop: 2 }}>
                 Scene {stepIdx + 1} of {script.length}
@@ -591,7 +592,7 @@ export function GuidedImageryScreen({ onDone }: GuidedImageryScreenProps) {
               background: "linear-gradient(to top, rgba(10,5,25,0.82) 0%, rgba(10,5,25,0.1) 60%, transparent 100%)",
             }} />
             <div style={{ position: "absolute", bottom: 12, left: 14 }}>
-              <div style={{ fontSize: 18, marginBottom: 2 }}>{l.emoji}</div>
+<l.Icon style={{ width: 18, height: 18, color: "rgba(255,255,255,0.8)", strokeWidth: 1.75, marginBottom: 4 }} />
               <div style={{ fontFamily: "Lora, serif", fontWeight: 500, fontSize: "0.95rem", color: "white", lineHeight: 1.2 }}>
                 {l.name}
               </div>

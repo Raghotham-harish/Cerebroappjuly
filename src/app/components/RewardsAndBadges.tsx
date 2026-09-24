@@ -1,12 +1,12 @@
-import { useState } from "react";
+import { useState, type ComponentType } from "react";
 import { AnimatedLogo } from "./AnimatedLogo";
-import { Award, TrendingUp, Flame, Star, Lock, CheckCircle } from "lucide-react";
+import { Award, TrendingUp, Flame, Star, Lock, CheckCircle, Target, Zap, Brain, Sparkles, Eye, BadgeCheck } from "lucide-react";
 
 interface Badge {
   id: string;
   name: string;
   description: string;
-  icon: string;
+  Icon: ComponentType<{ style?: React.CSSProperties }>;
   category: 'daily' | 'personal' | 'spiritual' | 'creative' | 'special';
   pointsRequired: number;
   unlocked: boolean;
@@ -29,7 +29,7 @@ export function RewardsAndBadges({ userName, totalPoints, currentStreak, onClose
       id: '1',
       name: 'First Steps',
       description: 'Complete your first daily intention',
-      icon: '🎯',
+      Icon: Target,
       category: 'special',
       pointsRequired: 5,
       unlocked: totalPoints >= 5,
@@ -39,7 +39,7 @@ export function RewardsAndBadges({ userName, totalPoints, currentStreak, onClose
       id: '2',
       name: 'Productivity Master',
       description: 'Achieve 150+ points in productivity goals',
-      icon: '⚡',
+      Icon: Zap,
       category: 'daily',
       pointsRequired: 150,
       unlocked: totalPoints >= 150
@@ -48,7 +48,7 @@ export function RewardsAndBadges({ userName, totalPoints, currentStreak, onClose
       id: '3',
       name: 'Meditation Champion',
       description: 'Complete 30 days of meditation practice',
-      icon: '🧘',
+      Icon: Brain,
       category: 'spiritual',
       pointsRequired: 150,
       unlocked: false
@@ -57,7 +57,7 @@ export function RewardsAndBadges({ userName, totalPoints, currentStreak, onClose
       id: '4',
       name: 'Creative Spark',
       description: 'Unlock creative potential through consistent practice',
-      icon: '✨',
+      Icon: Sparkles,
       category: 'creative',
       pointsRequired: 150,
       unlocked: false
@@ -66,7 +66,7 @@ export function RewardsAndBadges({ userName, totalPoints, currentStreak, onClose
       id: '5',
       name: 'Self-Aware',
       description: 'Achieve deep self-awareness milestones',
-      icon: '🔮',
+      Icon: Eye,
       category: 'personal',
       pointsRequired: 150,
       unlocked: false
@@ -75,7 +75,7 @@ export function RewardsAndBadges({ userName, totalPoints, currentStreak, onClose
       id: '6',
       name: '5-Day Warrior',
       description: 'Maintain a 5-day streak (2x points active)',
-      icon: '🔥',
+      Icon: Flame,
       category: 'special',
       pointsRequired: 25,
       unlocked: currentStreak >= 5
@@ -84,7 +84,7 @@ export function RewardsAndBadges({ userName, totalPoints, currentStreak, onClose
       id: '7',
       name: 'Centurion',
       description: 'Earn 100 total points',
-      icon: '💯',
+      Icon: BadgeCheck,
       category: 'special',
       pointsRequired: 100,
       unlocked: totalPoints >= 100
@@ -93,7 +93,7 @@ export function RewardsAndBadges({ userName, totalPoints, currentStreak, onClose
       id: '8',
       name: 'Enlightened',
       description: 'Reach 500 total points across all pillars',
-      icon: '🌟',
+      Icon: Star,
       category: 'special',
       pointsRequired: 500,
       unlocked: totalPoints >= 500
@@ -202,7 +202,7 @@ export function RewardsAndBadges({ userName, totalPoints, currentStreak, onClose
                       color: '#6B7280'
                     }}
                   >
-                    Day Streak {currentStreak >= 5 && '🔥'}
+                    Day Streak
                   </p>
                 </div>
                 <div>
@@ -245,7 +245,7 @@ export function RewardsAndBadges({ userName, totalPoints, currentStreak, onClose
                       fontWeight: 600
                     }}
                   >
-                    🔥 2x Points Active! Keep your streak going!
+                    2x Points Active! Keep your streak going!
                   </p>
                 </div>
               )}
@@ -359,10 +359,10 @@ export function RewardsAndBadges({ userName, totalPoints, currentStreak, onClose
                           }}
                         >
                           <div
-                            className="text-4xl mb-2 w-16 h-16 mx-auto rounded-full flex items-center justify-center"
+                            className="mb-2 w-16 h-16 mx-auto rounded-full flex items-center justify-center"
                             style={{ background: `${getCategoryColor(badge.category)}20` }}
                           >
-                            {badge.icon}
+                            <badge.Icon style={{ width: 28, height: 28, color: getCategoryColor(badge.category), strokeWidth: 1.5 }} />
                           </div>
                           <p
                             className="text-sm mb-1"

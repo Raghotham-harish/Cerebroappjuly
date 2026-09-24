@@ -124,10 +124,10 @@ export function StoryBuilderGame({ onClose, onComplete }: StoryBuilderGameProps)
             </div>
 
             <p className="text-center text-sm px-4" style={{ fontFamily: 'Inter, sans-serif', color: '#8B5CF6', fontWeight: 500 }}>
-              {accuracy === 100 ? "Perfect story recall! Amazing comprehension! 📖✨" :
-               accuracy >= 80 ? "Excellent sequential memory! 🎯" :
-               accuracy >= 60 ? "Good story tracking! Keep practicing 📚" :
-               "Your memory will strengthen with practice 🌟"}
+              {accuracy === 100 ? "Perfect story recall! Amazing comprehension!" :
+               accuracy >= 80 ? "Excellent sequential memory!" :
+               accuracy >= 60 ? "Good story tracking! Keep practicing." :
+               "Your memory will strengthen with practice."}
             </p>
           </div>
 

@@ -166,10 +166,10 @@ export function ThoughtSortGame({ onClose, onComplete }: ThoughtSortGameProps) {
             </div>
 
             <p className="text-center text-sm px-4" style={{ fontFamily: 'Inter, sans-serif', color: '#10B981', fontWeight: 500 }}>
-              {accuracy === 100 ? "Perfect cognitive awareness! 🧠✨" :
-               accuracy >= 80 ? "Excellent thought recognition! 💚" :
-               accuracy >= 60 ? "Good progress! Keep practicing 🌱" :
-               "You're learning to recognize patterns! 🌟"}
+              {accuracy === 100 ? "Perfect cognitive awareness!" :
+               accuracy >= 80 ? "Excellent thought recognition!" :
+               accuracy >= 60 ? "Good progress! Keep practicing." :
+               "You're learning to recognize patterns!"}
             </p>
           </div>
 
@@ -278,7 +278,7 @@ export function ThoughtSortGame({ onClose, onComplete }: ThoughtSortGameProps) {
 
           {!isCorrect && (
             <p className="text-sm text-center px-6" style={{ fontFamily: 'Inter, sans-serif', color: '#10B981', fontWeight: 500 }}>
-              Recognizing thought patterns takes practice! 💚
+              Recognizing thought patterns takes practice!
             </p>
           )}
         </div>

@@ -63,7 +63,7 @@ export function VoiceChatScreen({ oracleName, userName }: VoiceChatScreenProps) 
         type: 'breakthrough',
         title: 'Breakthrough Moment',
         description: 'You recognized your own agency — that external validation isn\'t required for your voice to matter.',
-        metadata: '✨ Self-authorization',
+        metadata: 'Self-authorization',
         color: '#DBEAFE'
       }
     },

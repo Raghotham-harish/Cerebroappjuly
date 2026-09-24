@@ -158,9 +158,9 @@ export function SoundHunterGame({ onClose, onComplete }: SoundHunterGameProps) {
             </div>
 
             <p className="text-center text-sm px-4" style={{ fontFamily: 'Inter, sans-serif', color: '#3B82F6', fontWeight: 500 }}>
-              {score >= 3 ? "Excellent auditory focus! Your concentration is sharp 🎧" :
-               score >= 2 ? "Good listening! Keep practicing your auditory attention 👂" :
-               "Keep training! Your auditory focus will improve 🎵"}
+              {score >= 3 ? "Excellent auditory focus! Your concentration is sharp." :
+               score >= 2 ? "Good listening! Keep practicing your auditory attention." :
+               "Keep training! Your auditory focus will improve."}
             </p>
           </div>
 
@@ -276,7 +276,7 @@ export function SoundHunterGame({ onClose, onComplete }: SoundHunterGameProps) {
         {/* Instructions */}
         <div className="mt-8 p-4 rounded-2xl max-w-sm" style={{ background: 'rgba(255,255,255,0.6)' }}>
           <p className="text-xs text-center" style={{ fontFamily: 'Inter, sans-serif', color: '#6B7280', lineHeight: 1.5 }}>
-            💡 <strong>How to play:</strong> Click the button only when you see the rain drops. Don't click for other sounds!
+            <strong>How to play:</strong> Click the button only when you see the rain drops. Don't click for other sounds!
           </p>
         </div>
       </div>

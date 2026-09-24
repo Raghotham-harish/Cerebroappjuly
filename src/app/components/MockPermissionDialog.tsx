@@ -78,7 +78,7 @@ export function MockPermissionDialog({ onAllow, onDeny }: MockPermissionDialogPr
         
         <div className="mt-3 pt-3 border-t border-gray-100">
           <p className="text-xs text-gray-600" style={{ fontFamily: 'Inter, sans-serif' }}>
-            💡 <strong>Mock Mode:</strong> This is a simulated permission dialog. In production, the browser's native dialog will appear.
+            <strong>Mock Mode:</strong> This is a simulated permission dialog. In production, the browser's native dialog will appear.
           </p>
         </div>
       </div>

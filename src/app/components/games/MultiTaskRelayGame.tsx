@@ -135,10 +135,10 @@ export function MultiTaskRelayGame({ onClose, onComplete }: MultiTaskRelayGamePr
             </div>
 
             <p className="text-center text-sm px-4" style={{ fontFamily: 'Inter, sans-serif', color: '#F59E0B', fontWeight: 500 }}>
-              {totalScore >= 40 ? "Amazing multitasking! 🧠⚡" :
-               totalScore >= 30 ? "Great task juggling! 🎯" :
-               totalScore >= 20 ? "You're learning to switch! 💡" :
-               "Multitasking takes practice! 🌟"}
+              {totalScore >= 40 ? "Amazing multitasking!" :
+               totalScore >= 30 ? "Great task juggling!" :
+               totalScore >= 20 ? "You're learning to switch!" :
+               "Multitasking takes practice!"}
             </p>
           </div>
 

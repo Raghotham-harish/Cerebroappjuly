@@ -134,10 +134,10 @@ export function ColorTapGame({ onClose, onComplete }: ColorTapGameProps) {
             </div>
 
             <p className="text-center text-sm px-4" style={{ fontFamily: 'Inter, sans-serif', color: '#8B5CF6', fontWeight: 500 }}>
-              {accuracy >= 90 ? "Excellent focus! Your attention is sharp 🎯" :
-               accuracy >= 75 ? "Great work! Keep building that selective attention 💪" :
-               accuracy >= 60 ? "Good effort! Practice makes perfect ⭐" :
-               "Keep practicing! Your focus will improve 🌱"}
+              {accuracy >= 90 ? "Excellent focus! Your attention is sharp." :
+               accuracy >= 75 ? "Great work! Keep building that selective attention." :
+               accuracy >= 60 ? "Good effort! Practice makes perfect." :
+               "Keep practicing! Your focus will improve."}
             </p>
           </div>
 

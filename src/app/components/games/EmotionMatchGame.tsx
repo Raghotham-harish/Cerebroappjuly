@@ -145,10 +145,10 @@ export function EmotionMatchGame({ onClose, onComplete }: EmotionMatchGameProps)
             </div>
 
             <p className="text-center text-sm px-4" style={{ fontFamily: 'Inter, sans-serif', color: '#8B5CF6', fontWeight: 500 }}>
-              {accuracy === 100 ? "Perfect emotional awareness! 💜✨" :
-               accuracy >= 80 ? "Excellent emotion recognition! 😊" :
-               accuracy >= 60 ? "Good emotional intelligence! Keep practicing 🌟" :
-               "Your emotional awareness will grow! 💪"}
+              {accuracy === 100 ? "Perfect emotional awareness!" :
+               accuracy >= 80 ? "Excellent emotion recognition!" :
+               accuracy >= 60 ? "Good emotional intelligence! Keep practicing." :
+               "Your emotional awareness will grow!"}
             </p>
           </div>
 

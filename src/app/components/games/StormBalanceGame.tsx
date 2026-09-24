@@ -150,10 +150,10 @@ export function StormBalanceGame({ onClose, onComplete }: StormBalanceGameProps)
             </div>
 
             <p className="text-center text-sm px-4" style={{ fontFamily: 'Inter, sans-serif', color: '#10B981', fontWeight: 500 }}>
-              {stayedBalanced >= 80 ? "Outstanding emotional balance! 🌊✨" :
-               stayedBalanced >= 60 ? "Great resilience in the storm! ⛵" :
-               stayedBalanced >= 40 ? "Good effort! Keep building balance 💚" :
-               "Every storm teaches resilience! 🌟"}
+              {stayedBalanced >= 80 ? "Outstanding emotional balance!" :
+               stayedBalanced >= 60 ? "Great resilience in the storm!" :
+               stayedBalanced >= 40 ? "Good effort! Keep building balance." :
+               "Every storm teaches resilience!"}
             </p>
           </div>
 

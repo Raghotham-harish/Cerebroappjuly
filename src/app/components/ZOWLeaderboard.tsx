@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Wind, ArrowRight } from "lucide-react";
+import { useState, type ComponentType } from "react";
+import { Wind, ArrowRight, Leaf, Eye, Heart } from "lucide-react";
 import { getZERColor, getZERArousal } from "./ZOWCapture";
 
 interface ZOWLeaderboardProps {
@@ -20,11 +20,11 @@ function calculateMedian(values: number[]): string {
 }
 
 // Microgrounding exercises shown after ZER capture
-const MICROGROUNDING = [
-  { title: '4-7-8 Breath', description: 'Inhale 4s · Hold 7s · Exhale 8s · 3 rounds', icon: '🌬️', duration: '2 min' },
-  { title: 'Ground in 5', description: 'Name 5 things you see · 4 you touch · 3 you hear', icon: '🌿', duration: '1 min' },
-  { title: 'Orienting', description: 'Slowly look around the room. Let your eyes rest on something pleasant.', icon: '👁️', duration: '1 min' },
-  { title: 'Hand on Heart', description: 'Place your hand on your chest. Feel your heartbeat. Breathe slowly.', icon: '🤍', duration: '2 min' },
+const MICROGROUNDING: { title: string; description: string; Icon: ComponentType<{ style?: React.CSSProperties }>; duration: string }[] = [
+  { title: '4-7-8 Breath', description: 'Inhale 4s · Hold 7s · Exhale 8s · 3 rounds', Icon: Wind, duration: '2 min' },
+  { title: 'Ground in 5', description: 'Name 5 things you see · 4 you touch · 3 you hear', Icon: Leaf, duration: '1 min' },
+  { title: 'Orienting', description: 'Slowly look around the room. Let your eyes rest on something pleasant.', Icon: Eye, duration: '1 min' },
+  { title: 'Hand on Heart', description: 'Place your hand on your chest. Feel your heartbeat. Breathe slowly.', Icon: Heart, duration: '2 min' },
 ];
 
 function isOutOfZone(score: number) { return score <= 2 || score >= 6; }
@@ -102,7 +102,7 @@ export function ZOWLeaderboard({ currentZER, trigger, onContinue, onViewHistory 
                 Try this quick microgrounding exercise to support your nervous system.
               </p>
               <div className="flex items-start gap-3 p-3 rounded-2xl mb-3" style={{ background: 'rgba(255,255,255,0.7)' }}>
-                <span className="text-2xl">{grounding.icon}</span>
+                <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#EDE9FE', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><grounding.Icon style={{ width: 18, height: 18, color: '#8B5CF6', strokeWidth: 1.75 }} /></div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-0.5">
                     <p className="text-sm" style={{ fontFamily: 'Inter, sans-serif', fontWeight: 600, color: '#15113C' }}>{grounding.title}</p>

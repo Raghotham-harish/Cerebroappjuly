@@ -135,7 +135,7 @@ export function ZOWHistory({ onBack }: ZOWHistoryProps) {
                 fontStyle: 'italic'
               }}
             >
-              💡 Each dot represents a ZER check-in, coloured by your arousal zone. Tap on any dot to see details.
+              Each dot represents a ZER check-in, coloured by your arousal zone. Tap on any dot to see details.
             </p>
           </div>
 

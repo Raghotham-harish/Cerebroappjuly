@@ -1,5 +1,5 @@
-import { useState, useRef } from "react";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { useState, useRef, type ComponentType } from "react";
+import { ChevronLeft, ChevronRight, X, Zap, Wind, Droplets, Activity, Footprints, Droplet, HeartPulse, Waves } from "lucide-react";
 import { ZEREmotionFlow, ZERFlowResult } from "./ZEREmotionFlow";
 import { motion } from "motion/react";
 
@@ -117,11 +117,11 @@ function WordCarousel({ score }: { score: number }) {
 
 // ── Hyper: somatic downregulation interventions ───────────────────────────────
 function HyperInterventionCard({ onNext, onSkip }: { onNext: () => void; onSkip: () => void }) {
-  const items = [
-    { icon: "🫁", title: "Five Finger Breathing", detail: "2 min · Trace each finger — breathe in up, out down" },
-    { icon: "🧊", title: "Cold Water Splash", detail: "30 sec · Cold water on wrists or face to downregulate" },
-    { icon: "🚶", title: "10-min Walk", detail: "Step away and let your body process through movement" },
-    { icon: "🤸", title: "One Gentle Stretch", detail: "1 min · Arms up, neck rolls, roll your shoulders back" },
+  const items: { Icon: ComponentType<{ style?: React.CSSProperties }>; title: string; detail: string }[] = [
+    { Icon: Wind,       title: "Five Finger Breathing", detail: "2 min · Trace each finger — breathe in up, out down" },
+    { Icon: Droplets,   title: "Cold Water Splash", detail: "30 sec · Cold water on wrists or face to downregulate" },
+    { Icon: Footprints, title: "10-min Walk", detail: "Step away and let your body process through movement" },
+    { Icon: Activity,   title: "One Gentle Stretch", detail: "1 min · Arms up, neck rolls, roll your shoulders back" },
   ];
   return (
     <motion.div
@@ -131,8 +131,8 @@ function HyperInterventionCard({ onNext, onSkip }: { onNext: () => void; onSkip:
       style={{ background: "linear-gradient(135deg, #FFF7ED 0%, #FEF3C7 100%)", border: "1.5px solid #FDBA74" }}
     >
       <div className="flex items-center gap-2 mb-3">
-        <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-sm" style={{ background: "#F97316" }}>
-          ⚡
+        <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "#F97316" }}>
+          <Zap style={{ width: 15, height: 15, color: "white", strokeWidth: 1.75 }} />
         </div>
         <div>
           <p className="text-sm font-semibold leading-tight" style={{ fontFamily: "Lora, serif", color: "#9A3412" }}>
@@ -146,7 +146,7 @@ function HyperInterventionCard({ onNext, onSkip }: { onNext: () => void; onSkip:
       <div className="space-y-2 mb-3">
         {items.map((item) => (
           <div key={item.title} className="flex items-start gap-3 px-3 py-2.5 rounded-2xl" style={{ background: "rgba(255,255,255,0.75)" }}>
-            <span className="text-base flex-shrink-0 mt-0.5">{item.icon}</span>
+            <item.Icon style={{ width: 16, height: 16, color: "#F97316", strokeWidth: 1.75, flexShrink: 0, marginTop: 2 }} />
             <div>
               <p className="text-xs font-semibold" style={{ fontFamily: "Inter, sans-serif", color: "#15113C" }}>{item.title}</p>
               <p className="text-xs mt-0.5 leading-snug" style={{ fontFamily: "Inter, sans-serif", color: "#6B7280" }}>{item.detail}</p>
@@ -176,10 +176,10 @@ function HyperInterventionCard({ onNext, onSkip }: { onNext: () => void; onSkip:
 
 // ── Hypo: restorative low-friction prompts ────────────────────────────────────
 function HypoInterventionCard({ onNext, onSkip }: { onNext: () => void; onSkip: () => void }) {
-  const items = [
-    { icon: "💧", title: "Just One Sip", detail: "Drink a full glass of water right now — small acts matter" },
-    { icon: "🚶", title: "Two Minutes Micro Walk", detail: "Just get up and move, even to the next room" },
-    { icon: "🍎", title: "Check Your Basics", detail: "Have you eaten? Had enough sleep? Hydrated today?" },
+  const items: { Icon: ComponentType<{ style?: React.CSSProperties }>; title: string; detail: string }[] = [
+    { Icon: Droplet,    title: "Just One Sip", detail: "Drink a full glass of water right now — small acts matter" },
+    { Icon: Footprints, title: "Two Minutes Micro Walk", detail: "Just get up and move, even to the next room" },
+    { Icon: HeartPulse, title: "Check Your Basics", detail: "Have you eaten? Had enough sleep? Hydrated today?" },
   ];
   return (
     <motion.div
@@ -189,8 +189,8 @@ function HypoInterventionCard({ onNext, onSkip }: { onNext: () => void; onSkip: 
       style={{ background: "linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%)", border: "1.5px solid #93C5FD" }}
     >
       <div className="flex items-center gap-2 mb-3">
-        <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-sm" style={{ background: "#3B82F6" }}>
-          🌊
+        <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "#3B82F6" }}>
+          <Waves style={{ width: 15, height: 15, color: "white", strokeWidth: 1.75 }} />
         </div>
         <div>
           <p className="text-sm font-semibold leading-tight" style={{ fontFamily: "Lora, serif", color: "#1E40AF" }}>
@@ -204,7 +204,7 @@ function HypoInterventionCard({ onNext, onSkip }: { onNext: () => void; onSkip: 
       <div className="space-y-2 mb-3">
         {items.map((item) => (
           <div key={item.title} className="flex items-start gap-3 px-3 py-2.5 rounded-2xl" style={{ background: "rgba(255,255,255,0.75)" }}>
-            <span className="text-base flex-shrink-0 mt-0.5">{item.icon}</span>
+            <item.Icon style={{ width: 16, height: 16, color: "#3B82F6", strokeWidth: 1.75, flexShrink: 0, marginTop: 2 }} />
             <div>
               <p className="text-xs font-semibold" style={{ fontFamily: "Inter, sans-serif", color: "#15113C" }}>{item.title}</p>
               <p className="text-xs mt-0.5 leading-snug" style={{ fontFamily: "Inter, sans-serif", color: "#6B7280" }}>{item.detail}</p>
@@ -417,7 +417,7 @@ export function ZOWCapture({ userName, onComplete }: ZOWCaptureProps) {
               {namedEmotion && (
                 <div className="mt-3 flex items-center gap-2 px-3 py-2 rounded-2xl" style={{ background: "#EDE9FE", border: "1.5px solid #C4B5FD" }}>
                   <span className="text-xs flex-1" style={{ fontFamily: "Inter, sans-serif", fontWeight: 600, color: "#6D28D9" }}>
-                    🏷️ {triggerLabel}
+                    {triggerLabel}
                   </span>
                   <button onClick={() => setNamedEmotion(null)}>
                     <X className="w-3 h-3" style={{ color: "#8B5CF6" }} />

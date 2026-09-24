@@ -21,32 +21,32 @@ const RULES: Rule[] = [
   {
     description: "Tap circles",
     check: (shape) => shape.type === "circle",
-    banner: "🔵 TAP CIRCLES"
+    banner: "TAP CIRCLES"
   },
   {
     description: "Tap squares",
     check: (shape) => shape.type === "square",
-    banner: "🟦 TAP SQUARES"
+    banner: "TAP SQUARES"
   },
   {
     description: "Tap triangles",
     check: (shape) => shape.type === "triangle",
-    banner: "🔺 TAP TRIANGLES"
+    banner: "TAP TRIANGLES"
   },
   {
     description: "Tap red shapes",
     check: (shape) => shape.color === "red",
-    banner: "🔴 TAP RED"
+    banner: "TAP RED"
   },
   {
     description: "Tap blue shapes",
     check: (shape) => shape.color === "blue",
-    banner: "🔵 TAP BLUE"
+    banner: "TAP BLUE"
   },
   {
     description: "Tap green shapes",
     check: (shape) => shape.color === "green",
-    banner: "🟢 TAP GREEN"
+    banner: "TAP GREEN"
   }
 ];
 
@@ -201,10 +201,10 @@ export function RuleSwitchGame({ onClose, onComplete }: RuleSwitchGameProps) {
             </div>
 
             <p className="text-center text-sm px-4" style={{ fontFamily: 'Inter, sans-serif', color: '#F59E0B', fontWeight: 500 }}>
-              {accuracy >= 85 ? "Amazing mental flexibility! 🧠⚡" :
-               accuracy >= 70 ? "Great adaptability! Keep it up 💛" :
-               accuracy >= 55 ? "You're building flexibility! 🌟" :
-               "Switching takes practice! You're learning 📈"}
+              {accuracy >= 85 ? "Amazing mental flexibility!" :
+               accuracy >= 70 ? "Great adaptability! Keep it up." :
+               accuracy >= 55 ? "You're building flexibility!" :
+               "Switching takes practice! You're learning."}
             </p>
           </div>
 

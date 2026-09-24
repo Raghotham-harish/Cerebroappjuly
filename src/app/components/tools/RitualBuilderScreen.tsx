@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { ArrowLeft, Check, Plus, X, Sun, Moon, Info } from "lucide-react";
+import { useState, type ComponentType } from "react";
+import { ArrowLeft, Check, Plus, X, Sun, Moon, Info, Clock, MapPin, Repeat, Pencil } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
 interface RitualBuilderScreenProps {
@@ -27,11 +27,11 @@ const DONE_BG = "linear-gradient(135deg, #EDE9FE 0%, #C4B5FD 100%)";
 
 /* ─── Info Modal ─────────────────────────────────────────────────────── */
 function InfoModal({ onClose }: { onClose: () => void }) {
-  const tips = [
-    { icon: "🕐", title: "Start small", body: "Begin with 2–3 steps. A 5-minute ritual done daily beats an elaborate one skipped." },
-    { icon: "📍", title: "Anchor to existing habits", body: "Pair your ritual with something you already do — waking up, brushing teeth, or making coffee." },
-    { icon: "🔁", title: "Consistency builds identity", body: "Repeating the same sequence every day trains your brain to enter the right state automatically." },
-    { icon: "✏️", title: "Customise freely", body: "Remove steps that don't serve you. Add steps that feel meaningful. Your ritual should feel yours." },
+  const tips: { Icon: ComponentType<{ style?: React.CSSProperties }>; title: string; body: string }[] = [
+    { Icon: Clock,  title: "Start small", body: "Begin with 2–3 steps. A 5-minute ritual done daily beats an elaborate one skipped." },
+    { Icon: MapPin, title: "Anchor to existing habits", body: "Pair your ritual with something you already do — waking up, brushing teeth, or making coffee." },
+    { Icon: Repeat, title: "Consistency builds identity", body: "Repeating the same sequence every day trains your brain to enter the right state automatically." },
+    { Icon: Pencil, title: "Customise freely", body: "Remove steps that don't serve you. Add steps that feel meaningful. Your ritual should feel yours." },
   ];
 
   return (
@@ -129,7 +129,7 @@ function InfoModal({ onClose }: { onClose: () => void }) {
                 background: "rgba(255,255,255,0.9)", border: "1.5px solid rgba(139,92,246,0.10)",
                 borderRadius: 16,
               }}>
-                <span style={{ fontSize: 22, flexShrink: 0, lineHeight: 1.4 }}>{t.icon}</span>
+                <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#EDE9FE', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><t.Icon style={{ width: 16, height: 16, color: '#8B5CF6', strokeWidth: 1.75 }} /></div>
                 <div>
                   <p style={{ fontFamily: "Inter, sans-serif", fontSize: 13, fontWeight: 700, color: "#15113C", margin: "0 0 3px" }}>{t.title}</p>
                   <p style={{ fontFamily: "Inter, sans-serif", fontSize: 12, color: "#6B7280", lineHeight: 1.55, margin: 0 }}>{t.body}</p>
