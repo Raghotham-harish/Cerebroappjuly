@@ -34,7 +34,7 @@ interface UserInfo {
 }
 
 function AppContent() {
-  const [appState, setAppState] = useState<AppState>("splash");
+  const [appState, setAppState] = useState<AppState>("login");
   const [userInfo, setUserInfo] = useState<UserInfo>({ name: "", gender: "" });
   const [oracleConfig, setOracleConfig] = useState<OracleConfig>({ name: "", avatarUrl: "", voiceType: "" });
   const [lifeSatisfactionScores, setLifeSatisfactionScores] = useState<number[]>([]);
